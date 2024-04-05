@@ -13,21 +13,21 @@ public class Settings {
     private final static String homeCommand = "return home";
 
     private final static String uponHomePage = "Revision program\n" +
-                                                       "Copyright (c) Owen Parfitt-Ford 2024. All" +
-                                                       " rights reserved.\n\n" +
-                                                       "Type \"select\" to select a subset of the" +
-                                                       " questions loaded from the provided file," +
-                                                       " type " +
-                                                       "\"list\" to view your loaded list of " +
-                                                       "questions, and sort by a desired " +
-                                                       "attribute, or " +
-                                                       "type \"" + exitCommand +
-                                                       "\" to exit the program (you will be able " +
-                                                       "to save any changes " +
-                                                       "you might have made to the file). At any " +
-                                                       "time, type \"" +
-                                                       homeCommand + "\" to return " +
-                                                       "to this home page:";
+            "Copyright (c) Owen Parfitt-Ford 2024. All" +
+            " rights reserved.\n\n" +
+            "Type \"select\" to select a subset of the" +
+            " questions loaded from the provided file," +
+            " type " +
+            "\"list\" to view your loaded list of " +
+            "questions, and sort by a desired " +
+            "attribute, or " +
+            "type \"" + exitCommand +
+            "\" to exit the program (you will be able " +
+            "to save any changes " +
+            "you might have made to the file). At any " +
+            "time, type \"" +
+            homeCommand + "\" to return " +
+            "to this home page:";
     private final static String uponFilter =
             "Please enter values for the following filters below " +
                     "(separate multiple values with commas; e.g. to only choose questions " +
@@ -39,23 +39,23 @@ public class Settings {
                     "for which you would like to remove the corresponding questions in your " +
                     "current selection:";
     private final static String uponSelectRunType = "Please enter one of the following values to " +
-                                                            "select your desired operation " +
-                                                            "mode:\n" +
-                                                            "1. Type \"R\" to revise questions in" +
-                                                            " order, based on which questions the" +
-                                                            " program " +
-                                                            "determines are most important (see " +
-                                                            "\"Likelihood\" in the provided .csv " +
-                                                            "file)\n" +
-                                                            "2. Type \"T\" to simply test " +
-                                                            "yourself by answering the questions " +
-                                                            "selected in the order " +
-                                                            "specified in the provided file\n" +
-                                                            "3. Type \"C\" to define a custom way" +
-                                                            " in which to sort and display the " +
-                                                            "questions, for " +
-                                                            "instance by title, or by number of " +
-                                                            "times answered correctly";
+            "select your desired operation " +
+            "mode:\n" +
+            "1. Type \"R\" to revise questions in" +
+            " order, based on which questions the" +
+            " program " +
+            "determines are most important (see " +
+            "\"Likelihood\" in the provided .csv " +
+            "file)\n" +
+            "2. Type \"T\" to simply test " +
+            "yourself by answering the questions " +
+            "selected in the order " +
+            "specified in the provided file\n" +
+            "3. Type \"C\" to define a custom way" +
+            " in which to sort and display the " +
+            "questions, for " +
+            "instance by title, or by number of " +
+            "times answered correctly";
     private final static String uponRun =
             "For each question, type \"Y\" if you were able to answer " +
                     "the question correctly, or \"N\" to indicate you were not";
@@ -69,10 +69,10 @@ public class Settings {
                     "\" (case-sensitive)?";
 
     private final static String uponHomeRequest = "Are you sure you would like to return to the " +
-                                                          "home page? Type \"" + homeCommand +
-                                                          "\" again to confirm returning home, or" +
-                                                          " type anything " +
-                                                          "else to continue where you were:";
+            "home page? Type \"" + homeCommand +
+            "\" again to confirm returning home, or" +
+            " type anything " +
+            "else to continue where you were:";
     private final static String uponExitRequest =
             "Are you sure you would like to exit the program? " +
                     "Type \"" + exitCommand +

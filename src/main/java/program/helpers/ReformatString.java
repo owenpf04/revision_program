@@ -93,9 +93,8 @@ public class ReformatString {
      * Reformats the provided string, removing any excess whitespace or surrounding quotes.
      *
      * <p>'Surrounding quotes' refers to double quotes (") at the first and last position in the
-     * string
-     * (once stripped of excess whitespace), and they are removed only if the number of double
-     * quotes at the start of the string is odd, indicating the outermost pair of quotes are
+     * string (once stripped of excess whitespace), and they are removed only if the number of
+     * double quotes at the start of the string is odd, indicating the outermost pair of quotes are
      * 'surrounding quotes', and not regular double quote characters (indicated by a pair of double
      * quotes "").
      *

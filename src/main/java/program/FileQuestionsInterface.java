@@ -42,7 +42,7 @@ public class FileQuestionsInterface {
      *         reason.
      */
     public static QuestionList createQuestionList(String fileLocation) throws FileNotFoundException,
-                                                                                      IllegalArgumentException {
+            IllegalArgumentException {
         QuestionList questions;
 
         try {
@@ -53,11 +53,11 @@ public class FileQuestionsInterface {
             System.out.println(questions.getNumQuestions() + " questions successfully loaded.");
         } catch (FileNotFoundException e) {
             throw new FileNotFoundException("File at location \"" + fileLocation +
-                                                    "\" not found! Details:\n" + e.getMessage());
+                    "\" not found! Details:\n" + e.getMessage());
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("File at location \"" + fileLocation +
-                                                       "\" could not be parsed! Details:\n" +
-                                                       e.getMessage());
+                    "\" could not be parsed! Details:\n" +
+                    e.getMessage());
         }
 
         return questions;
@@ -80,7 +80,7 @@ public class FileQuestionsInterface {
      */
     public static ArrayList<Question> getQuestionsFromFile(String fileLocation) throws
             FileNotFoundException,
-                    IllegalArgumentException {
+            IllegalArgumentException {
         File file = new File(fileLocation);
         Scanner fileScanner = new Scanner(file);
         ArrayList<Question> questions = new ArrayList<>();
@@ -88,8 +88,8 @@ public class FileQuestionsInterface {
         String firstLine = fileScanner.nextLine();
         if (!firstLine.equals(COLUMN_HEADERS)) {
             throw new IllegalArgumentException("First line (headers) \"" + firstLine +
-                                                       "\" does not match expected headers \"" +
-                                                       COLUMN_HEADERS + "\" !");
+                    "\" does not match expected headers \"" +
+                    COLUMN_HEADERS + "\" !");
         }
 
         int lineCount = 1;
@@ -104,8 +104,8 @@ public class FileQuestionsInterface {
                 question = parseFileLine(line);
             } catch (IllegalArgumentException e) {
                 throw new IllegalArgumentException("Line #" + lineCount + " - \"" + line +
-                                                           "\" - is invalid! Details:\n" +
-                                                           e.getMessage());
+                        "\" - is invalid! Details:\n" +
+                        e.getMessage());
             }
 
             questions.add(question);
@@ -135,7 +135,7 @@ public class FileQuestionsInterface {
 
         if (line.isBlank()) {
             throw new IllegalArgumentException("\"" + line + "\" has 0 fields, expected " +
-                                                       questionAttributes.length + "!");
+                    questionAttributes.length + "!");
         }
 
         String lineSegment = line;
@@ -148,8 +148,8 @@ public class FileQuestionsInterface {
                 section = lineSegment.substring(0, firstSeparatingCommaIndex);
             } catch (IndexOutOfBoundsException e) {
                 throw new IllegalArgumentException("\"" + line + "\" has " + (i + 1) +
-                                                           " fields, expected " +
-                                                           questionAttributes.length + "!");
+                        " fields, expected " +
+                        questionAttributes.length + "!");
             }
 
             switch (i) {
@@ -167,24 +167,24 @@ public class FileQuestionsInterface {
                     } catch (NumberFormatException e) {
                         if (i == 0) {
                             throw new IllegalArgumentException("Value of " + (i + 1) +
-                                                                       "st field \"index\" in \"" +
-                                                                       line +
-                                                                       "\" (\"" + section +
-                                                                       "\") is not an integer!");
+                                    "st field \"index\" in \"" +
+                                    line +
+                                    "\" (\"" + section +
+                                    "\") is not an integer!");
                         } else if (i == 7) {
                             throw new IllegalArgumentException("Value of " + (i + 1) +
-                                                                       "th field \"attempted\" in" +
-                                                                       " \"" +
-                                                                       line +
-                                                                       "\" (\"" + section +
-                                                                       "\") is not an integer!");
+                                    "th field \"attempted\" in" +
+                                    " \"" +
+                                    line +
+                                    "\" (\"" + section +
+                                    "\") is not an integer!");
                         } else {
                             throw new IllegalArgumentException("Value of " + (i + 1) +
-                                                                       "th field \"correct\" in " +
-                                                                       "\"" +
-                                                                       line +
-                                                                       "\" (\"" + section +
-                                                                       "\") is not an integer!");
+                                    "th field \"correct\" in " +
+                                    "\"" +
+                                    line +
+                                    "\" (\"" + section +
+                                    "\") is not an integer!");
                         }
                     }
                 }
@@ -197,19 +197,19 @@ public class FileQuestionsInterface {
                     } catch (NumberFormatException e) {
                         if (i == 9) {
                             throw new IllegalArgumentException("Value of " + (i + 1) +
-                                                                       "th field \"percentage\" " +
-                                                                       "in \"" +
-                                                                       line +
-                                                                       "\" (\"" + section +
-                                                                       "\") is not a number!");
+                                    "th field \"percentage\" " +
+                                    "in \"" +
+                                    line +
+                                    "\" (\"" + section +
+                                    "\") is not a number!");
                         } else {
                             throw new IllegalArgumentException("Value of " + (i + 1) +
-                                                                       "th field " +
-                                                                       "\"expectedTimesAsked\" in" +
-                                                                       " \"" +
-                                                                       line +
-                                                                       "\" (\"" + section +
-                                                                       "\") is not a number!");
+                                    "th field " +
+                                    "\"expectedTimesAsked\" in" +
+                                    " \"" +
+                                    line +
+                                    "\" (\"" + section +
+                                    "\") is not a number!");
                         }
                     }
                 }
@@ -222,14 +222,14 @@ public class FileQuestionsInterface {
             questionAttributes[questionAttributes.length - 1] = Double.parseDouble(lineSegment);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Value of " + (questionAttributes.length) +
-                                                       "th field \"likelihood\" in \"" + line +
-                                                       "\" (\"" + lineSegment +
-                                                       "\") is not a number!");
+                    "th field \"likelihood\" in \"" + line +
+                    "\" (\"" + lineSegment +
+                    "\") is not a number!");
         }
 
         return new Question((int) questionAttributes[0], (String) questionAttributes[1],
                 (String) questionAttributes[2], (String) questionAttributes[3], (String)
-                                                                                        questionAttributes[4],
+                questionAttributes[4],
                 (String) questionAttributes[5], (String) questionAttributes[6],
                 (int) questionAttributes[7], (int) questionAttributes[8],
                 (double) questionAttributes[9],

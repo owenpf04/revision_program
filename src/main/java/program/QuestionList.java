@@ -45,7 +45,7 @@ public class QuestionList {
         StringComparator comparator;
 
         if (attribute.equals(QuestionAttribute.TITLE) ||
-                    attribute.equals(QuestionAttribute.TOPIC)) {
+                attribute.equals(QuestionAttribute.TOPIC)) {
             comparator = new StringComparator(true);
         } else {
             comparator = new StringComparator(false);
@@ -85,8 +85,8 @@ public class QuestionList {
                     key.isReverse());
         } else {
             throw new RuntimeException("Provided SortingKey \"" + key + "\" has neither a " +
-                                               "QuestionAttributeKey nor a " +
-                                               "QuestionNumericalAttributeKey!");
+                    "QuestionAttributeKey nor a " +
+                    "QuestionNumericalAttributeKey!");
         }
 
         return sortedList;
@@ -141,21 +141,20 @@ public class QuestionList {
 
         String returnString = "";
 
-        for (int i = 0; i < questionsToDisplay.size(); i++) {
-            returnString += ("#" + (i + 1));
+        int number = 0;
+        for (Question elem : questionsToDisplay) {
+            number++;
+            returnString += ("#" + number);
 
             if (sortingKey != null && sortingKey.hasQuestionNumericalAttributeKey()) {
                 QuestionNumericalAttribute att = sortingKey.getQuestionNumericalAttributeKey();
+                String value = String.format("%.2f", (double) elem.getQuestionNumericalAttribute(att));
 
-                // TODO round numerical attribute value
-
-                returnString += " (" + (ReformatString.toPlainText(att.toString(), false) +
-                                                " = " + questionsToDisplay.get(i)
-                                                                .getQuestionNumericalAttribute(
-                                                                        att)) + ")";
+                returnString += " (" + ReformatString.toPlainText(att.toString(), false) +
+                        " = " + value + ")";
             }
 
-            returnString += ("   -   " + questionsToDisplay.get(i) + "\n");
+            returnString += ("   -   " + elem + "\n");
         }
 
         return returnString;

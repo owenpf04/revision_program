@@ -35,7 +35,7 @@ public class InvalidQuestionAttributeException extends Exception {
      */
     public InvalidQuestionAttributeException(QuestionAttribute attribute, String value) {
         this(attribute, value, ("\"" + value + "\" is not a valid " +
-                                        ReformatString.toCamelCase(attribute.toString()) + "!"));
+                ReformatString.toCamelCase(attribute.toString()) + "!"));
     }
 
     /**

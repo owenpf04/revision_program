@@ -36,8 +36,8 @@ public class CLI {
 
         do {
             System.out.println("Please specify the exact location of the CSV file you'd like to " +
-                                       "load from, or type \"" + Settings.getExitCommand() +
-                                       "\" to exit the program:");
+                    "load from, or type \"" + Settings.getExitCommand() +
+                    "\" to exit the program:");
             Scanner keyboard = new Scanner(System.in);
             String fileLocation = keyboard.nextLine();
 
@@ -96,7 +96,7 @@ public class CLI {
         do {
             validResponse = true;
             System.out.println(ReformatString.toPlainText(att.toString(), false) +
-                                       ":");
+                    ":");
             String[] response = keyboard.nextLine().split(",");
 
             if (returnHomeCheck(response[0])) {
@@ -266,10 +266,8 @@ public class CLI {
      *         to be sorted in ascending order.
      */
     public static boolean getCustomReverse() {
-        String question = "Would you like the questions to be sorted in ascending " +
-                                  "(default; e.g. A-Z, 0-9) - \"A\"  - or descending (e.g. Z-A, " +
-                                  "9-0) - \"D\" " +
-                                  "order?";
+        String question = "Would you like the questions to be sorted in ascending (default; e.g. " +
+                "A-Z, 0-9) - \"A\" - or descending (e.g. Z-A, 9-0) - \"D\" order?";
         String[] validResponses = {"A", "D"};
 
         String response = getResponse(question, validResponses, true, false, true);
@@ -362,8 +360,8 @@ public class CLI {
     public static boolean askSaveChanges() {
         String[] validResponses = {"Y", "N"};
         String question = "Would you like to save any changes you might have made? " +
-                                  "Type \"Y\" to save any changes, or \"N\" not to " +
-                                  "(case-sensitive):";
+                "Type \"Y\" to save any changes, or \"N\" not to " +
+                "(case-sensitive):";
 
         String response = getResponse(question, validResponses, false,
                 false, false);

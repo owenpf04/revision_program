@@ -98,7 +98,7 @@ public class Main {
 
         if (args.length > 1) {
             throw new IllegalArgumentException("Expected maximum 1 command line argument, got " +
-                                                       args.length + "!");
+                    args.length + "!");
         } else if (args.length == 1) {
             String fileLocation = ReformatString.removeWhitespaceAndQuotes(args[0]);
 
@@ -106,9 +106,9 @@ public class Main {
                 questions = FileQuestionsInterface.createQuestionList(fileLocation);
             } catch (FileNotFoundException | IllegalArgumentException e) {
                 throw new IllegalArgumentException("File at location \"" + fileLocation +
-                                                           "\" (provided by command-line " +
-                                                           "arguments) invalid! Details:\n" +
-                                                           e.getMessage());
+                        "\" (provided by command-line " +
+                        "arguments) invalid! Details:\n" +
+                        e.getMessage());
             }
         } else {
             if (isCommandLine) {
@@ -381,7 +381,7 @@ public class Main {
                     FileQuestionsInterface.saveToFile(fileQList);
                 } catch (IOException e) {
                     throw new RuntimeException("File location \"" + fileQList.getFileLocation() +
-                                                       " cannot be opened, or cannot be created!");
+                            " cannot be opened, or cannot be created!");
                 }
             }
         }

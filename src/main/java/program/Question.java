@@ -76,7 +76,7 @@ public class Question {
                     expectedTimesAsked, likelihood);
         } catch (InvalidQuestionNumericalAttributeException e) {
             if (e.getAttribute() == QuestionNumericalAttribute.PERCENTAGE || e.getAttribute() ==
-                                                                                     QuestionNumericalAttribute.LIKELIHOOD) {
+                    QuestionNumericalAttribute.LIKELIHOOD) {
                 System.out.print(e);
                 System.out.println(" Overwriting with correct value and continuing...");
             } else {
@@ -168,14 +168,14 @@ public class Question {
         }
         double calcLikelihoodPercentComp = 100 - percentage;
         double calcLikelihoodTimesAskedComp = 50 - ((50 * (attempted - expectedTimesAsked)) /
-                                                            (((Settings.getTimesAskedAbsoluteOffset() /
-                                                                       100) * expectedTimesAsked) +
-                                                                     Settings.getTimesAskedAbsoluteOffset()));
+                (((Settings.getTimesAskedAbsoluteOffset() /
+                        100) * expectedTimesAsked) +
+                        Settings.getTimesAskedAbsoluteOffset()));
         calcLikelihoodTimesAskedComp = Math.max(calcLikelihoodTimesAskedComp, 0);
         calcLikelihoodTimesAskedComp = Math.min(calcLikelihoodTimesAskedComp, 100);
         double calculatedLikelihood =
                 ((Settings.getPercentageWeighting() * calcLikelihoodPercentComp) +
-                         calcLikelihoodTimesAskedComp) / (Settings.getPercentageWeighting() + 1);
+                        calcLikelihoodTimesAskedComp) / (Settings.getPercentageWeighting() + 1);
         return calculatedLikelihood;
     }
 
@@ -233,8 +233,8 @@ public class Question {
 
     public String toString() {
         String stringToReturn = this.getExamBoard() + " " + this.getQualLevel() + " " +
-                                        this.getSubject() + " (" + this.getTopic() +
-                                        ") question: " + this.getTitle();
+                this.getSubject() + " (" + this.getTopic() +
+                ") question: " + this.getTitle();
         return stringToReturn;
     }
 }
