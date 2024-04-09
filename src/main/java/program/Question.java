@@ -168,7 +168,7 @@ public class Question {
         }
         double calcLikelihoodPercentComp = 100 - percentage;
         double calcLikelihoodTimesAskedComp = 50 - ((50 * (attempted - expectedTimesAsked)) /
-                (((Settings.getTimesAskedAbsoluteOffset() /
+                (((Settings.getTimesAskedPercentageOffset() /
                         100) * expectedTimesAsked) +
                         Settings.getTimesAskedAbsoluteOffset()));
         calcLikelihoodTimesAskedComp = Math.max(calcLikelihoodTimesAskedComp, 0);

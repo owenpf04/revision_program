@@ -95,7 +95,7 @@ public class FileQuestionsInterface {
         int lineCount = 1;
 
         while (fileScanner.hasNext()) {
-            lineCount += 1;
+            lineCount++;
 
             String line = fileScanner.nextLine();
             Question question = null;

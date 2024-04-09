@@ -1,12 +1,31 @@
 package program;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Objects;
 import java.util.Random;
+import java.util.Scanner;
 
 /**
  * <p>
  * Copyright (c) Owen Parfitt-Ford 2024. All rights reserved.
  */
 public class Settings {
+    // FILE-READ SETTINGS START
+
+    private static String questionsFileLocation = "";
+    // cannot be equal to minus one as would be dividing by 0
+    private static double percentageWeighting = 1;
+    // percentage and absolute offsets cannot both be 0 (divisor is (percentage * expected asks)
+    // + absolute
+    private static double timesAskedPercentageOffset = 25;
+    private static double timesAskedAbsoluteOffset = 2;
+
+    //FILE-READ SETTINGS END
 
     //TODO these should all be screaming snake case
     private final static String exitCommand = "exit program";
@@ -82,6 +101,7 @@ public class Settings {
                     "else to continue where you were:";
     private final static String uponProgramExit = "Exiting revision program...";
 
+    //TODO remove motivational messages
     private static boolean displayMotivationMessages = true;
     private static String[] motivationalMessages = {"Izzy dawg, keep going you sweetie pook",
             "I know it's hard, but sometimes hard is good, so keep going",
@@ -104,13 +124,6 @@ public class Settings {
             "Owieeeee",
             "If you don't keep going, you will be looked at as a failed individual"};
     private static int motivationalMessagesFrequency = 4;
-
-    // cannot be equal to minus as would be dividing by 0
-    private static double percentageWeighting = 1;
-    // percentage and absolute offsets cannot both be 0 (divisor is (percentage * expected asks)
-    // + absolute
-    private static double timesAskedPercentageOffset = 25;
-    private static double timesAskedAbsoluteOffset = 2;
 
     public static String getExitCommand() {
         return exitCommand;
@@ -179,5 +192,51 @@ public class Settings {
 
     public static double getTimesAskedAbsoluteOffset() {
         return timesAskedAbsoluteOffset;
+    }
+
+    public static void loadFromFile() {
+        Scanner file = null;
+        String settingsDirectory = Settings.class.getProtectionDomain().getCodeSource()
+                .getLocation().getPath();
+        String settingsLocation = settingsDirectory + "settings.txt";
+        try {
+            file = new Scanner(new File(settingsLocation));
+            parseFile(file);
+        } catch (FileNotFoundException e) {
+            System.out.println("No settings file found - new settings file with default values " +
+                    "will be created.");
+            InputStream stream = Settings.class.getClassLoader().getResourceAsStream(
+                    "default_settings.txt");
+            file = new Scanner(Objects.requireNonNull(stream,
+                    "File \"default_settings.txt\" could not be found in resources!"));
+            parseFile(file);
+        } catch (IllegalArgumentException e) {
+            //provided settings file is invalid - use default instead
+        }
+    }
+
+    private static void parseFile(Scanner file) throws IllegalArgumentException {
+        boolean isComment = false;
+        int lineNumber = 0;
+        while (file.hasNext()) {
+            String line = file.nextLine();
+            lineNumber++;
+
+            if (line.equals("/*")) {
+                isComment = true;
+            } else if (line.equals("*/")) {
+                isComment = false;
+            }
+
+            if (!isComment && !line.isBlank()) {
+                int equalsIndex = line.indexOf("=");
+                //Line is intended to be parsed
+                if (equalsIndex < 0) {
+                    throw new IllegalArgumentException("Line #" + lineNumber + " - \"" + line +
+                            "\" - is invalid: ");
+                }
+                // lots of if statements for each possible assignment
+            }
+        }
     }
 }
