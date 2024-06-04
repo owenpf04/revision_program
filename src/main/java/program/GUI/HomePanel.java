@@ -12,12 +12,13 @@ public class HomePanel extends JPanel {
         setLayout(new BorderLayout());
 
         JPanel innerPanel = new JPanel();
+        JScrollPane scrollPane = new JScrollPane(innerPanel);
+
         CardLayout cardLayout = new CardLayout();
         innerPanel.setLayout(cardLayout);
-        innerPanel.add(new HomeSelectFilePanel(), "homeSelectFilePanel");
+        innerPanel.add(new HomeSelectFilePanel(scrollPane), "homeSelectFilePanel");
         innerPanel.add(new HomeFilterQuestionsPanel(), "homeFilterQuestionsPanel");
 
-        JScrollPane scrollPane = new JScrollPane(innerPanel);
         scrollPane.setBorder(new EmptyBorder(0,0,0,0));
         add(scrollPane, BorderLayout.CENTER);
 

@@ -14,8 +14,9 @@ import java.time.LocalDateTime;
 public class HomeSelectFilePanel extends JPanel {
     private JPanel titlePanel;
     private JPanel filePanel;
+    private JScrollPane parentScrollPane;
 
-    public HomeSelectFilePanel() {
+    public HomeSelectFilePanel(JScrollPane parentScrollPane) {
         setBorder(new EmptyBorder(20,20,20,20));
         setLayout(new BorderLayout());
         titlePanel = new TitlePanel();
@@ -23,6 +24,8 @@ public class HomeSelectFilePanel extends JPanel {
 
         add(titlePanel, BorderLayout.NORTH);
         add(filePanel, BorderLayout.CENTER);
+
+        this.parentScrollPane = parentScrollPane;
     }
 
     private class TitlePanel extends JPanel {
@@ -130,13 +133,17 @@ public class HomeSelectFilePanel extends JPanel {
                     public void actionPerformed(ActionEvent e) {
                         //TODO customise default opening location?
                         JFileChooser fileChooser = new JFileChooser();
+                        fileChooser.setAcceptAllFileFilterUsed(false);
                         FileNameExtensionFilter filter = new FileNameExtensionFilter(
                                 ".csv files", "csv");
                         fileChooser.setFileFilter(filter);
-                        int returnVal = fileChooser.showOpenDialog(null);
-                        if(returnVal == JFileChooser.APPROVE_OPTION) {
+                        int returnVal = fileChooser.showOpenDialog(parentScrollPane);
+                        if (returnVal == JFileChooser.APPROVE_OPTION) {
                             System.out.println("You chose to open this file: " +
                                     fileChooser.getSelectedFile().getName());
+                        } else if (returnVal == JFileChooser.ERROR_OPTION) {
+                            JOptionPane.showMessageDialog(parentScrollPane,
+                                    "An error occurred", "Error", JOptionPane.ERROR_MESSAGE);
                         }
                     }
                 });
