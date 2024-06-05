@@ -21,22 +21,22 @@ public class Question {
      * Constructor for initialising a revision_program.Question object with the provided parameters
      *
      * @param title
-     *         The title of the question
+     *         The title of the question.
      * @param topic
-     *         The topic of the question
+     *         The topic of the question.
      * @param paperUnit
-     *         The paper or unit to which the question - and topic - belong
+     *         The paper or unit to which the question - and topic - belong.
      * @param subject
-     *         The subject to which the question belongs
+     *         The subject to which the question belongs.
      * @param qualLevel
      *         The qualification level of the subject to which the question belongs (e.g. A Level,
      *         GCSE etc.)
      * @param examBoard
-     *         The exam board of the subject to which the question belongs
+     *         The exam board of the subject to which the question belongs.
      * @param attempted
-     *         The number of times the question has previously been attempted/asked
+     *         The number of times the question has previously been attempted/asked.
      * @param correct
-     *         The number of times the question has previously been answered correctly
+     *         The number of times the question has previously been answered correctly.
      * @param expectedTimesAsked
      *         The sum of (1 / number of questions in current question pool) for each iteration
      *         where this revision_program.Question object was in the question pool. Consider a
@@ -45,14 +45,14 @@ public class Question {
      *         member) were asked 24 times, the value of expectedTimesAsked would be 6 * (1 / 12) +
      *         24 * ( 1 / 48) = (6 / 12) + (24 / 48) = 1, meaning that Q would be expected to have
      *         been asked exactly once among all 54 questions asked, assuming all questions have
-     *         equal likelihood
+     *         equal likelihood.
      *
      * @throws IllegalArgumentException
-     *         if any of the provided parameters are invalid
+     *         if any of the provided parameters are invalid.
      */
     public Question(int index, String title, String topic, String paperUnit, String subject,
             String qualLevel, String examBoard, int attempted, int correct, double percentage,
-            double expectedTimesAsked, double likelihood) throws IllegalArgumentException {
+            double expectedTimesAsked, double likelihood, Settings settings) throws IllegalArgumentException {
         String[] qAtts = {title, topic, paperUnit, subject, qualLevel, examBoard};
         qAtts = ReformatString.removeWhitespaceAndQuotes(qAtts);
         try {
@@ -73,8 +73,9 @@ public class Question {
 
         try {
             QuestionNumericalAttribute.assertAttributesValid(index, attempted, correct, percentage,
-                    expectedTimesAsked, likelihood);
+                    expectedTimesAsked, likelihood, settings);
         } catch (InvalidQuestionNumericalAttributeException e) {
+            //TODO this needs changing as it is CLI-specific
             if (e.getAttribute() == QuestionNumericalAttribute.PERCENTAGE || e.getAttribute() ==
                     QuestionNumericalAttribute.LIKELIHOOD) {
                 System.out.print(e);
@@ -97,7 +98,7 @@ public class Question {
             percentage = 100 * ((double) correct / attempted);
         }
         numericalAttributeNumberMap.put(QuestionNumericalAttribute.PERCENTAGE, percentage);
-        likelihood = calculateLikelihood(attempted, percentage, expectedTimesAsked);
+        likelihood = calculateLikelihood(attempted, percentage, expectedTimesAsked, settings);
         numericalAttributeNumberMap.put(QuestionNumericalAttribute.LIKELIHOOD, likelihood);
 
         this.attributeStringMap = attributeStringMap;
@@ -162,29 +163,29 @@ public class Question {
     }
 
     public static double calculateLikelihood(int attempted, double percentage,
-            double expectedTimesAsked) {
+            double expectedTimesAsked, Settings settings) {
         if (expectedTimesAsked == 0) {
             return 0;
         }
         double calcLikelihoodPercentComp = 100 - percentage;
         double calcLikelihoodTimesAskedComp = 50 - ((50 * (attempted - expectedTimesAsked)) /
-                (((Settings.getTimesAskedAbsoluteOffset() /
+                (((settings.getTimesAskedAbsoluteOffset() /
                         100) * expectedTimesAsked) +
-                        Settings.getTimesAskedAbsoluteOffset()));
+                        settings.getTimesAskedAbsoluteOffset()));
         calcLikelihoodTimesAskedComp = Math.max(calcLikelihoodTimesAskedComp, 0);
         calcLikelihoodTimesAskedComp = Math.min(calcLikelihoodTimesAskedComp, 100);
         double calculatedLikelihood =
-                ((Settings.getPercentageWeighting() * calcLikelihoodPercentComp) +
-                        calcLikelihoodTimesAskedComp) / (Settings.getPercentageWeighting() + 1);
+                ((settings.getPercentageWeighting() * calcLikelihoodPercentComp) +
+                        calcLikelihoodTimesAskedComp) / (settings.getPercentageWeighting() + 1);
         return calculatedLikelihood;
     }
 
-    public void answeredCorrect(int questionsInPool) {
+    public void answeredCorrect(int questionsInPool, Settings settings) {
         numericalAttributeNumberMap.put(QuestionNumericalAttribute.CORRECT, this.getCorrect() + 1);
-        this.answeredIncorrect(questionsInPool);
+        this.answeredIncorrect(questionsInPool, settings);
     }
 
-    public void answeredIncorrect(int questionsInPool) {
+    public void answeredIncorrect(int questionsInPool, Settings settings) {
         int attempted = this.getAttempted();
         int correct = this.getCorrect();
 
@@ -194,16 +195,16 @@ public class Question {
         numericalAttributeNumberMap.put(QuestionNumericalAttribute.ATTEMPTED, attempted);
         numericalAttributeNumberMap.put(QuestionNumericalAttribute.PERCENTAGE, percentage);
 
-        this.notAsked(questionsInPool);
+        this.notAsked(questionsInPool, settings);
     }
 
-    public void notAsked(int questionsInPool) {
+    public void notAsked(int questionsInPool, Settings settings) {
         int attempted = this.getAttempted();
         double expectedTimesAsked = this.getExpectedTimesAsked();
         double percentage = this.getPercentage();
 
         expectedTimesAsked += (double) 1 / questionsInPool;
-        double likelihood = calculateLikelihood(attempted, percentage, expectedTimesAsked);
+        double likelihood = calculateLikelihood(attempted, percentage, expectedTimesAsked, settings);
 
         numericalAttributeNumberMap.put(QuestionNumericalAttribute.EXPECTED_TIMES_ASKED,
                 expectedTimesAsked);

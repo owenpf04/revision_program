@@ -1,6 +1,7 @@
 package program.attributes.fields;
 
 import program.Question;
+import program.Settings;
 import program.exceptions.InvalidQuestionNumericalAttributeException;
 import program.helpers.ReformatString;
 
@@ -91,7 +92,7 @@ public enum QuestionNumericalAttribute {
      */
     public static void assertAttributesValid(int index, int attempted, int correct,
             double percentage,
-            double expectedTimesAsked, double likelihood) throws
+            double expectedTimesAsked, double likelihood, Settings settings) throws
             InvalidQuestionNumericalAttributeException {
         assertAttributeNotLessThanZero(index, INDEX);
         assertAttributeNotLessThanZero(attempted, ATTEMPTED);
@@ -102,8 +103,8 @@ public enum QuestionNumericalAttribute {
 
         if (correct > attempted) {
             String errorMessage =
-                    "\"Correct\" value " + correct + "is greater than \"Attempted\" value " +
-                            attempted + "!";
+                    "The \"Correct\" value " + correct + " is greater than \"Attempted\" value " +
+                            attempted + ".";
             throw new InvalidQuestionNumericalAttributeException(CORRECT, correct, errorMessage);
         }
 
@@ -119,10 +120,10 @@ public enum QuestionNumericalAttribute {
         }
 
         if (roundedFilePercentage != calcPercentage) {
-            String errorMessage = "\"Percentage\" value for \"Correct\" = " + correct +
+            String errorMessage = "The \"Percentage\" value for \"Correct\" = " + correct +
                     " and \"Attempted\" = " + attempted + " should be " +
-                    calcPercentage + ", got " +
-                    percentage + "!";
+                    calcPercentage + ", but the value provided is " +
+                    percentage + ".";
             throw new InvalidQuestionNumericalAttributeException(PERCENTAGE, percentage,
                     errorMessage);
         }
@@ -130,15 +131,15 @@ public enum QuestionNumericalAttribute {
         double roundedFileLikelihood = Double.parseDouble(String.format("%.2f", likelihood));
 
         double calcLikelihood = Question.calculateLikelihood(attempted, percentage,
-                expectedTimesAsked);
+                expectedTimesAsked, settings);
         calcLikelihood = Double.parseDouble(String.format("%.2f", calcLikelihood));
 
         if (roundedFileLikelihood != calcLikelihood) {
-            String errorMessage = "\"Likelihood\" value for \"Attempted\" = " + attempted +
+            String errorMessage = "The \"Likelihood\" value for \"Attempted\" = " + attempted +
                     ", \"Percentage\" = " + percentage +
                     " and \"Expected times asked\" = " +
                     expectedTimesAsked + " should be " + calcLikelihood +
-                    ", got " + likelihood + "!";
+                    ", but the value provided is " + likelihood + "!";
             throw new InvalidQuestionNumericalAttributeException(LIKELIHOOD, likelihood,
                     errorMessage);
         }

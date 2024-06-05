@@ -17,11 +17,9 @@ import java.util.Collections;
  */
 public class QuestionList {
     private ArrayList<Question> questions;
-    private String fileLocation;
 
-    public QuestionList(ArrayList<Question> questions, String fileLocation) {
+    public QuestionList(ArrayList<Question> questions) {
         this.questions = questions;
-        this.fileLocation = fileLocation;
     }
 
     public ArrayList<Question> getQuestions() {
@@ -34,10 +32,6 @@ public class QuestionList {
 
     public Question getFirstQuestion() {
         return questions.get(0);
-    }
-
-    public String getFileLocation() {
-        return fileLocation;
     }
 
     public QuestionList selectByAttributeArray(String[] values, QuestionAttribute attribute) {
@@ -59,7 +53,7 @@ public class QuestionList {
             }
         }
 
-        return new QuestionList(matchingQuestions, this.fileLocation);
+        return new QuestionList(matchingQuestions);
     }
 
     public QuestionList sortByAttribute(QuestionAttribute attribute, boolean reverse) {
@@ -111,23 +105,23 @@ public class QuestionList {
 //        return new QuestionList(originalList, this.fileLocation);
 //    }
 
-    public void answeredFirstQuestion(Boolean isCorrect) {
-        answeredQuestion(0, isCorrect);
+    public void answeredFirstQuestion(Boolean isCorrect, Settings settings) {
+        answeredQuestion(0, isCorrect, settings);
     }
 
-    public void answeredQuestion(int index, boolean isCorrect) {
+    public void answeredQuestion(int index, boolean isCorrect, Settings settings) {
         ArrayList<Question> questionsList = this.questions;
         int questionsInPool = questionsList.size();
 
         if (isCorrect) {
-            questionsList.get(index).answeredCorrect(questionsInPool);
+            questionsList.get(index).answeredCorrect(questionsInPool, settings);
         } else {
-            questionsList.get(index).answeredIncorrect(questionsInPool);
+            questionsList.get(index).answeredIncorrect(questionsInPool, settings);
         }
 
         for (int i = 0; i < questionsInPool; i++) {
             if (i != index) {
-                questionsList.get(i).notAsked(questionsInPool);
+                questionsList.get(i).notAsked(questionsInPool, settings);
             }
         }
     }

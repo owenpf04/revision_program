@@ -76,7 +76,8 @@ public enum QuestionAttribute {
      *
      * @throws InvalidQuestionAttributeException
      *         if the provided {@code value} is not a valid value for the {@code QuestionAttribute}
-     *         provided, or if {@code value} is blank (using isBlank).
+     *         provided, or if {@code value} is blank (using isBlank) if the
+     *         {@code QuestionAttribute} doesn't have a list of valid values.
      */
     public static String formatAttributeName(String value, QuestionAttribute attribute)
             throws InvalidQuestionAttributeException {
