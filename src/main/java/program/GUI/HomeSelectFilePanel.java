@@ -5,10 +5,14 @@ import org.kordamp.ikonli.carbonicons.CarbonIcons;
 import org.kordamp.ikonli.swing.FontIcon;
 import program.FileQuestionsInterface;
 import program.QuestionList;
+import program.Settings;
 import program.exceptions.InvalidQuestionFileException;
+import program.helpers.ReformatDate;
+import program.helpers.ReformatString;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -22,8 +26,10 @@ public class HomeSelectFilePanel extends JPanel {
     private JPanel titlePanel;
     private JPanel filePanel;
     private HomeScrollPane parentScrollPane;
+    private Settings settings;
 
-    public HomeSelectFilePanel(HomeScrollPane parentScrollPane) {
+    public HomeSelectFilePanel(HomeScrollPane parentScrollPane, Settings settings) {
+        this.settings = settings;
         setBorder(new EmptyBorder(20,20,20,20));
         setLayout(new BorderLayout());
         titlePanel = new TitlePanel();
@@ -63,18 +69,8 @@ public class HomeSelectFilePanel extends JPanel {
         }
 
         private String getGreetingMessage() {
-            return ("Good " + getTimeGreeting() + ", " + "Owen");
-        }
-
-        private String getTimeGreeting() {
-            int currentHour = LocalDateTime.now().getHour();
-            if (currentHour >= 4 && currentHour < 12) {
-                return "morning";
-            } else if (currentHour >= 12 && currentHour < 17) {
-                return "afternoon";
-            } else {
-                return "evening";
-            }
+            return ("Good " + ReformatDate.getTimeOfDay(LocalDateTime.now(), false) +
+                    ", " + settings.getUserName());
         }
     }
 
@@ -85,34 +81,12 @@ public class HomeSelectFilePanel extends JPanel {
         public FilePanel() {
             setLayout(new BorderLayout());
 
-            recentFilesPanel = new RecentFilesPanel();
+            recentFilesPanel = new RecentFilesPanel(settings);
+            recentFilesPanel.setBorder(new EmptyBorder(0,0,20,0));
             openFilePanel = new OpenFilePanel();
 
             add(recentFilesPanel, BorderLayout.CENTER);
             add(openFilePanel, BorderLayout.SOUTH);
-        }
-
-        private class RecentFilesPanel extends JPanel {
-            private JLabel openFilePromptLabel;
-            private JPanel recentFilesButtonsPanel;
-
-            public RecentFilesPanel() {
-                setLayout(new BorderLayout());
-
-                openFilePromptLabel = new JLabel("Recent files", SwingConstants.LEFT);
-                openFilePromptLabel.setFont(new Font("Bahnschrift", Font.PLAIN, 36));
-                openFilePromptLabel.setBorder(new EmptyBorder(30,0,0,0));
-
-                recentFilesButtonsPanel = createRecentFilesPanel();
-                recentFilesButtonsPanel.setPreferredSize(new Dimension(400,300));
-
-                add(openFilePromptLabel, BorderLayout.NORTH);
-                add(recentFilesButtonsPanel, BorderLayout.CENTER);
-            }
-
-            private JPanel createRecentFilesPanel() {
-                return new JPanel();
-            }
         }
 
         private class OpenFilePanel extends JPanel {
@@ -127,7 +101,9 @@ public class HomeSelectFilePanel extends JPanel {
                 openFilePromptLabel.setFont(new Font("Bahnschrift", Font.PLAIN, 36));
 
                 chooseFileButtonPanel = new JPanel();
-                chooseFileButton = new JButton("Select a file", FontIcon.of(CarbonIcons.FOLDER, 30));
+                chooseFileButton = new JButton("Select a file", FontIcon.of(CarbonIcons.FOLDER, 50));
+                chooseFileButton.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+                chooseFileButton.setIconTextGap(15);
                 chooseFileButton.setPreferredSize(new Dimension(200,100));
                 chooseFileButtonPanel.add(chooseFileButton);
                 chooseFileButtonPanel.setBorder(new EmptyBorder(30,0,10,0));
@@ -139,7 +115,7 @@ public class HomeSelectFilePanel extends JPanel {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         //TODO customise default opening location?
-                        JFileChooser fileChooser = new JFileChooser();
+                        JFileChooser fileChooser = new JFileChooser(settings.getDefaultFileOpeningDirectory());
                         fileChooser.setAcceptAllFileFilterUsed(false);
                         FileNameExtensionFilter filter = new FileNameExtensionFilter(
                                 ".csv files", "csv");
@@ -155,8 +131,9 @@ public class HomeSelectFilePanel extends JPanel {
                                     "An error occurred.", "Error", JOptionPane.ERROR_MESSAGE);
                         } else if (returnVal == JFileChooser.APPROVE_OPTION) {
                             File chosenFile = fileChooser.getSelectedFile();
+
                             try {
-                                FileQuestionsInterface fQInterface = new FileQuestionsInterface(parentScrollPane.getSettings(),
+                                FileQuestionsInterface fQInterface = new FileQuestionsInterface(settings,
                                         chosenFile.getAbsolutePath());
                                 QuestionList questionsFromFile = fQInterface.getQuestionList();
                             } catch (InvalidQuestionFileException exc) {
@@ -181,47 +158,19 @@ public class HomeSelectFilePanel extends JPanel {
             mainPanel.add(mainErrorMessage);
 
             String detailsMessage = "File location: " +
-                    wrapString(e.getFileLocation(), 60, 15) +
+                    ReformatString.wrapString(e.getFileLocation(), 60, 15) +
                     "\nLine number:   " + e.getLineNumber() +
-                    "\nLine:          \"" + wrapString(e.getLine(), 60, 15) +
-                    "\"\nDescription:   " + wrapString(e.getDescription(), 60, 15);
+                    "\nLine:          \"" + ReformatString.wrapString(e.getLine(), 60, 15) +
+                    "\"\nDescription:   " + ReformatString.wrapString(e.getDescription(), 60, 15);
             JTextArea details = new JTextArea(detailsMessage);
             details.setEditable(false);
             details.setFont(new Font(FlatJetBrainsMonoFont.FAMILY, Font.PLAIN, 12));
-            details.setBorder(new EmptyBorder(30,0,0,0));
+            details.setBorder(new EmptyBorder(20,0,0,0));
 
             mainPanel.add(details);
 
             JOptionPane.showMessageDialog(parentScrollPane, mainPanel, "Error",
                     JOptionPane.ERROR_MESSAGE);
-        }
-
-        private String wrapString(String toWrap, int wrapLength, int offset) {
-            ArrayList<Integer> indexesToWrapAt = new ArrayList<>();
-            indexesToWrapAt.add(0);
-
-            while (toWrap.length() >= indexesToWrapAt.get(indexesToWrapAt.size() - 1) + wrapLength) {
-                int previousIndex = indexesToWrapAt.get(indexesToWrapAt.size() - 1);
-                int nextIndex = toWrap.substring(previousIndex + 1, previousIndex + wrapLength).lastIndexOf(" ");
-
-                if (nextIndex != -1) {
-                    indexesToWrapAt.add(nextIndex + previousIndex + 1);
-                } else {
-                    indexesToWrapAt.add(previousIndex + wrapLength);
-                }
-            }
-
-            String returnString = "";
-            for (int i = 1; i < indexesToWrapAt.size(); i++) {
-                returnString += toWrap.substring(indexesToWrapAt.get(i - 1), indexesToWrapAt.get(i));
-                returnString += ("\n" + " ".repeat(offset - 1));
-                if (toWrap.charAt(indexesToWrapAt.get(i)) != ' ') {
-                    returnString += " ";
-                }
-            }
-            returnString += toWrap.substring(indexesToWrapAt.get(indexesToWrapAt.size() - 1));
-
-            return returnString;
         }
     }
 }

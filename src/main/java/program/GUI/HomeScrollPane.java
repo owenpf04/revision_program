@@ -19,7 +19,7 @@ public class HomeScrollPane extends JScrollPane {
 
         CardLayout cardLayout = new CardLayout();
         innerPanel.setLayout(cardLayout);
-        innerPanel.add(new HomeSelectFilePanel(this), "homeSelectFilePanel");
+        innerPanel.add(new HomeSelectFilePanel(this, settings), "homeSelectFilePanel");
         innerPanel.add(new HomeFilterQuestionsPanel(), "homeFilterQuestionsPanel");
 
         setBorder(new EmptyBorder(0,0,0,0));

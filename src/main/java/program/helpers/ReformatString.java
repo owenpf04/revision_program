@@ -1,5 +1,6 @@
 package program.helpers;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -68,13 +69,15 @@ public class ReformatString {
     /**
      * {@return the provided string, with the first character in each word capitalised} That is to
      * say, for every space in the provided string, the character immediately proceeding the space
-     * is made uppercase, and the result is returned.
+     * is made uppercase, as well as the first character of the string, and the result is returned.
      *
      * @param s
      *         the string to reformat.
      */
     public static String capitaliseEachWord(String s) {
         int spaceIndex = 0;
+
+        s = s.substring(0,1).toUpperCase() + s.substring(1);
 
         while (s.indexOf(" ", spaceIndex + 1) != -1) {
             spaceIndex = s.indexOf(" ", spaceIndex + 1);
@@ -152,5 +155,33 @@ public class ReformatString {
         }
 
         return arrayToReturn;
+    }
+
+    public static String wrapString(String toWrap, int wrapLength, int offset) {
+        ArrayList<Integer> indexesToWrapAt = new ArrayList<>();
+        indexesToWrapAt.add(0);
+
+        while (toWrap.length() >= indexesToWrapAt.get(indexesToWrapAt.size() - 1) + wrapLength) {
+            int previousIndex = indexesToWrapAt.get(indexesToWrapAt.size() - 1);
+            int nextIndex = toWrap.substring(previousIndex + 1, previousIndex + wrapLength).lastIndexOf(" ");
+
+            if (nextIndex != -1) {
+                indexesToWrapAt.add(nextIndex + previousIndex + 1);
+            } else {
+                indexesToWrapAt.add(previousIndex + wrapLength);
+            }
+        }
+
+        String returnString = "";
+        for (int i = 1; i < indexesToWrapAt.size(); i++) {
+            returnString += toWrap.substring(indexesToWrapAt.get(i - 1), indexesToWrapAt.get(i));
+            returnString += ("\n" + " ".repeat(offset - 1));
+            if (toWrap.charAt(indexesToWrapAt.get(i)) != ' ') {
+                returnString += " ";
+            }
+        }
+        returnString += toWrap.substring(indexesToWrapAt.get(indexesToWrapAt.size() - 1));
+
+        return returnString;
     }
 }

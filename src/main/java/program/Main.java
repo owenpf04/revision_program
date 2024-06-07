@@ -1,5 +1,7 @@
 package program;
 
+import com.formdev.flatlaf.fonts.jetbrains_mono.FlatJetBrainsMonoFont;
+import com.formdev.flatlaf.intellijthemes.FlatSolarizedLightIJTheme;
 import program.GUI.MainFrame;
 import program.attributes.fields.QuestionAttribute;
 import program.attributes.fields.QuestionNumericalAttribute;
@@ -9,11 +11,16 @@ import program.helpers.ReformatString;
 import program.helpers.RunStats;
 import program.helpers.SortingKey;
 
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
 /**
@@ -34,9 +41,135 @@ public class Main {
      * @param args
      *         command-line arguments.
      */
-    public static void main(String[] args) throws IOException {
-        Settings settings = new Settings(true);
-        MainFrame mainFrame = new MainFrame(settings);
+    public static void main(String[] args) {
+        FlatSolarizedLightIJTheme.setup();
+        FlatJetBrainsMonoFont.install();
+
+        // Exception catching here is a fallback, it should be done in each of the individual methods
+        // first
+        try {
+            Settings settings = loadSettings();
+
+            MainFrame mainFrame = new MainFrame(settings);
+        } catch (Exception e) {
+            displayUncaughtExceptionDialog(e, "Not specified");
+            System.exit(2);
+        }
+    }
+
+    private static Settings loadSettings() {
+        boolean resetSettingsToDefault = false;
+        try {
+            return new Settings(false);
+        } catch (IllegalArgumentException e) {
+            String description = "The contents of app.properties are invalid, and therefore " +
+                    "settings could not be properly loaded.";
+            resetSettingsToDefault = requestUseDefaults(description, e.getMessage());
+        } catch (NullPointerException e) {
+            String description = "The app.properties file, which should be located in the main " +
+                    "program folder, does not exist or could not be opened.";
+            resetSettingsToDefault = requestUseDefaults(description);
+        } catch (IOException e) {
+            String description = "Trying to load app.properties - an error occurred while reading " +
+                    "from the provided InputStream (see Settings.loadCustomProperties()).";
+            displayUncaughtExceptionDialog(e, description);
+            System.exit(1);
+        } catch (URISyntaxException e) {
+            String description = "Trying to load app.properties - the URL returned by" +
+                    "Settings.class.getProtectionDomain().getCodeSource().getLocation() is not " +
+                    "formatted strictly according to RFC2396 and cannot be converted to a URI.";
+            displayUncaughtExceptionDialog(e, description);
+            System.exit(1);
+        }
+
+        if (resetSettingsToDefault) {
+            Settings settings = null;
+
+            try {
+                Settings.copyDefaultSettings();
+            } catch (Exception e) {
+                String description = "Trying to copy default settings to app.properties";
+                displayUncaughtExceptionDialog(e, description);
+                System.exit(1);
+            }
+
+            return loadSettings();
+        } else {
+            System.exit(1);
+            return null;
+        }
+    }
+
+    private static boolean requestUseDefaults(String message, String details) {
+        JPanel mainPanel = new JPanel(new BorderLayout());
+
+        JLabel mainLabel = new JLabel("An error occurred while trying to load app.properties " +
+                "(the settings file).");
+        mainLabel.setBorder(new EmptyBorder(0,0,20,0));
+        mainLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        JPanel descriptionPanel = new JPanel(new BorderLayout());
+        JLabel descriptionLabel = new JLabel("Description: " + message);
+        descriptionLabel.setBorder(new EmptyBorder(0,0,20,0));
+
+        if (details != null && !details.isBlank()) {
+            JLabel detailsLabel = new JLabel("Details: " + details);
+            detailsLabel.setBorder(new EmptyBorder(0,0,20,0));
+            descriptionPanel.add(detailsLabel, BorderLayout.CENTER);
+        }
+
+        descriptionPanel.add(descriptionLabel, BorderLayout.NORTH);
+
+        JLabel buttonDescriptionsLabel = new JLabel("<html>Click \"Yes\" to create a new " +
+                "app.properties file in the correct location (or overwrite the existing invalid " +
+                "one - this will delete any saved<br>settings, but not any of your question files), " +
+                "or click \"No\" to exit the program.</html>");
+
+        mainPanel.add(mainLabel, BorderLayout.NORTH);
+        mainPanel.add(descriptionPanel, BorderLayout.CENTER);
+        mainPanel.add(buttonDescriptionsLabel, BorderLayout.SOUTH);
+
+        int response = JOptionPane.showConfirmDialog(null, mainPanel,
+                "Error - reset to default settings?", JOptionPane.YES_NO_OPTION,
+                JOptionPane.ERROR_MESSAGE);
+
+        if (response == JOptionPane.YES_OPTION) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private static boolean requestUseDefaults(String message) {
+        return requestUseDefaults(message, null);
+    }
+
+    private static void displayUncaughtExceptionDialog(Exception e, String description) {
+        //TODO update contact details
+        JPanel mainPanel = new JPanel(new BorderLayout());
+
+        JLabel mainLabel = new JLabel(("An unexpected error has occurred. Details:"));
+        mainLabel.setBorder(new EmptyBorder(0,0,20,0));
+
+        String detailsMessage = "Exception description: " + ReformatString.wrapString(description, 60, 23) +
+                "\nCause:                 " + ReformatString.wrapString(String.valueOf(e), 60, 23) +
+                "\nStacktrace:            " + ReformatString.wrapString(Arrays.toString(e.getStackTrace()), 60, 23);
+        JTextArea details = new JTextArea(detailsMessage);
+        details.setEditable(false);
+        details.setFont(new Font(FlatJetBrainsMonoFont.FAMILY, Font.PLAIN, 12));
+        details.setBorder(new EmptyBorder(0,0,20,0));
+
+        String finalMessage = "Please send me an email at owenpf@outlook.com with these details. " +
+                "The program will now exit.";
+        JLabel finalLabel = new JLabel(finalMessage);
+
+        mainPanel.add(mainLabel, BorderLayout.NORTH);
+        mainPanel.add(details, BorderLayout.CENTER);
+        mainPanel.add(finalLabel, BorderLayout.SOUTH);
+
+        JOptionPane.showMessageDialog(null, mainPanel, "Error - uncaught exception",
+                JOptionPane.ERROR_MESSAGE);
+
     }
 //    public static void main(String[] args) {
 //        MainFrame.main(args);

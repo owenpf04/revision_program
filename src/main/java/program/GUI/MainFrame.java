@@ -1,23 +1,16 @@
 package program.GUI;
 
-import com.formdev.flatlaf.fonts.jetbrains_mono.FlatJetBrainsMonoFont;
-import com.formdev.flatlaf.intellijthemes.FlatSolarizedLightIJTheme;
 import program.Settings;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.util.Properties;
 
 public class MainFrame extends JFrame {
     private Settings settings;
 
     public MainFrame(Settings settings) {
         this.settings = settings;
-        FlatJetBrainsMonoFont.install();
-        FlatSolarizedLightIJTheme.setup();
+
         UIManager.put("TabbedPane.tabHeight", 150);
         UIManager.put("TabbedPane.font", new Font("Segoe UI", Font.BOLD, 16));
         UIManager.put("TabbedPane.minimumTabWidth", 150);
@@ -33,7 +26,7 @@ public class MainFrame extends JFrame {
         int screenWidth = (int) toolkit.getScreenSize().getWidth();
         int screenHeight = (int) toolkit.getScreenSize().getHeight();
 
-        setSize(screenWidth * 2 / 3, screenHeight * 2 / 3);
+        setSize(screenWidth * 3 / 4, screenHeight * 3 / 4);
 
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBackground(new Color(37,39,40));
@@ -41,10 +34,5 @@ public class MainFrame extends JFrame {
 
         add(mainPanel);
         setVisible(true);
-    }
-
-    public static void main(String[] args) throws IOException {
-        Settings settings = new Settings(true);
-        MainFrame mainFrame = new MainFrame(settings);
     }
 }
