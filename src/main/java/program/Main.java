@@ -62,6 +62,7 @@ public class Main {
         try {
             return new Settings(false);
         } catch (IllegalArgumentException e) {
+            //TODO change this to allow only resetting particular fields, rather than entire file
             String description = "The contents of app.properties are invalid, and therefore " +
                     "settings could not be properly loaded.";
             resetSettingsToDefault = requestUseDefaults(description, e.getMessage());

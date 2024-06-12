@@ -8,35 +8,33 @@ import java.time.temporal.ChronoUnit;
 public class ReformatDate {
     public static String describeInWords(LocalDateTime dateTime) {
         LocalDateTime currentDateTime = LocalDateTime.now();
+        Period datesBetween = Period.between(dateTime.toLocalDate(), currentDateTime.toLocalDate());
+
         if (ChronoUnit.DECADES.between(dateTime, currentDateTime) > 0) {
             return "Over a decade ago";
         }
 
-        long yearsBetween = ChronoUnit.YEARS.between(dateTime, currentDateTime);
-        if (yearsBetween == 1) {
+        if (datesBetween.getYears() == 1) {
             return "A year ago";
-        } else if (yearsBetween > 1) {
-            return (yearsBetween + " years ago");
+        } else if (datesBetween.getYears() > 1) {
+            return (datesBetween.getYears() + " years ago");
         }
 
-        long monthsBetween = ChronoUnit.MONTHS.between(dateTime, currentDateTime);
-        if (monthsBetween == 1) {
+        if (datesBetween.getMonths() == 1) {
             return "A month ago";
-        } else if (monthsBetween > 1) {
-            return (monthsBetween + " months ago");
+        } else if (datesBetween.getMonths() > 1) {
+            return (datesBetween.getMonths() + " months ago");
         }
 
-        long weeksBetween = ChronoUnit.WEEKS.between(dateTime, currentDateTime);
-        if (weeksBetween == 1) {
-            long daysBetween = ChronoUnit.DAYS.between(dateTime, currentDateTime);
-            return (daysBetween + " days ago");
-        } else if (weeksBetween > 1) {
-            return (weeksBetween + " weeks ago");
+        if (datesBetween.getDays() >= 14) {
+            return ((datesBetween.getDays() / 2) + " weeks ago");
         }
 
-        Period datesBetween = Period.between(dateTime.toLocalDate(), currentDateTime.toLocalDate());
+
         String timeOfDay = getTimeOfDay(dateTime, true);
-        if (datesBetween.getDays() > 1) {
+        if (datesBetween.getDays() >= 7){
+            return (datesBetween.getDays() + " days ago");
+        } else if (datesBetween.getDays() > 1) {
             return (ReformatString.toCamelCase(dateTime.getDayOfWeek().name()) + " " + timeOfDay);
         } else if (datesBetween.getDays() == 1) {
             if (timeOfDay.equals("night")) {

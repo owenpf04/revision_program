@@ -1,11 +1,7 @@
 package program;
 
-import program.exceptions.InvalidQuestionFileException;
-
 import java.io.*;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.*;
 import java.util.Properties;
 import java.util.Set;
@@ -16,6 +12,8 @@ import java.util.TreeSet;
  * Copyright (c) Owen Parfitt-Ford 2024. All rights reserved.
  */
 public class Settings {
+
+    //TODO store lifetime statistics
     private enum OS {
         WINDOWS, MAC, LINUX, UNKNOWN;
     }
@@ -151,6 +149,10 @@ public class Settings {
 
                 switch (key) {
                     case "userName" -> {
+                        if (value.equals("user.name")) {
+                            return System.getProperty("user.name");
+                        }
+
                         return value;
                     }
                     case "defaultFileOpeningDirectory" -> {

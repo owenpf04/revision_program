@@ -12,6 +12,7 @@
 //
 //import java.io.FileNotFoundException;
 //import java.util.Arrays;
+//import java.util.List;
 //import java.util.Scanner;
 //
 ///**
@@ -116,8 +117,8 @@
 //            try {
 //                response = QuestionAttribute.formatAttributeNameArray(response, att);
 //                response = ReformatString.removeDuplicates(response);
-//
-//                QuestionList questionSelection = filteredQuestions.selectByAttributeArray(response,
+//                List<String> responseList = Arrays.asList(response);
+//                QuestionList questionSelection = filteredQuestions.selectByAttributeArray(responseList,
 //                        att);
 //
 //                filteredQuestions = Main.updateQuestionList(filteredQuestions, questionSelection,

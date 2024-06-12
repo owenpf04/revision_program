@@ -8,8 +8,7 @@ import program.comparators.StringComparator;
 import program.helpers.ReformatString;
 import program.helpers.SortingKey;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 
 /**
  * <p>
@@ -34,7 +33,7 @@ public class QuestionList {
         return questions.get(0);
     }
 
-    public QuestionList selectByAttributeArray(String[] values, QuestionAttribute attribute) {
+    public QuestionList selectByAttributeArray(Collection<String> values, QuestionAttribute attribute) {
         ArrayList<Question> matchingQuestions = new ArrayList<>();
         StringComparator comparator;
 
@@ -152,5 +151,15 @@ public class QuestionList {
         }
 
         return returnString;
+    }
+
+    public Set<String> getValues(QuestionAttribute attribute) {
+        Set<String> returnSet = new TreeSet<>();
+
+        for (Question question : questions) {
+            returnSet.add(question.getQuestionAttribute(attribute));
+        }
+
+        return returnSet;
     }
 }
