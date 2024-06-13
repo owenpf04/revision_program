@@ -1,8 +1,11 @@
-package program.GUI;
+package program.GUI.fileSelection;
 
 import org.kordamp.ikonli.carbonicons.CarbonIcons;
 import org.kordamp.ikonli.swing.FontIcon;
 import program.FileQuestionsInterface;
+import program.GUI.HomeScrollPane;
+import program.GUI.TitlePanel;
+import program.Main;
 import program.QuestionList;
 import program.Settings;
 import program.exceptions.InvalidQuestionFileException;
@@ -31,7 +34,8 @@ public class HomeSelectFilePanel extends JPanel {
 
         setBorder(new EmptyBorder(20,20,20,20));
         setLayout(new BorderLayout());
-        titlePanel = new TitlePanel(getGreetingMessage(), 72, "Open a question file to get revising:", 24);
+        titlePanel = new TitlePanel(getGreetingMessage(),
+                "Open a question file to get revising:");
         filePanel = new FilePanel();
 
         add(titlePanel, BorderLayout.NORTH);
@@ -67,11 +71,11 @@ public class HomeSelectFilePanel extends JPanel {
                 setLayout(new BorderLayout());
 
                 openFilePromptLabel = new JLabel("Choose a file to open", SwingConstants.LEFT);
-                openFilePromptLabel.setFont(new Font("Bahnschrift", Font.PLAIN, 36));
+                openFilePromptLabel.putClientProperty("FlatLaf.styleClass", "h0");
 
                 chooseFileButtonPanel = new JPanel();
                 chooseFileButton = new JButton("Select a file", FontIcon.of(CarbonIcons.FOLDER, 50));
-                chooseFileButton.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+                chooseFileButton.putClientProperty("FlatLaf.styleClass", "large");
                 chooseFileButton.setIconTextGap(15);
                 chooseFileButton.setPreferredSize(new Dimension(200,100));
                 chooseFileButtonPanel.add(chooseFileButton);
@@ -86,36 +90,41 @@ public class HomeSelectFilePanel extends JPanel {
             private class chooseFileActionListener implements ActionListener {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    JFileChooser fileChooser = new JFileChooser(settings.getDefaultFileOpeningDirectory());
-                    fileChooser.setAcceptAllFileFilterUsed(false);
-                    FileNameExtensionFilter filter = new FileNameExtensionFilter(
-                            ".csv files", "csv");
-                    fileChooser.setFileFilter(filter);
+                    try {
+                        JFileChooser fileChooser = new JFileChooser(settings.getDefaultFileOpeningDirectory());
+                        fileChooser.setAcceptAllFileFilterUsed(false);
+                        FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                                ".csv files", "csv");
+                        fileChooser.setFileFilter(filter);
 
-                    Action details = fileChooser.getActionMap().get("viewTypeDetails");
-                    details.actionPerformed(null);
+                        Action details = fileChooser.getActionMap().get("viewTypeDetails");
+                        details.actionPerformed(null);
 
-                    int returnVal = fileChooser.showOpenDialog(parentScrollPane);
+                        int returnVal = fileChooser.showOpenDialog(parentScrollPane);
 
-                    if (returnVal == JFileChooser.ERROR_OPTION) {
-                        JOptionPane.showMessageDialog(parentScrollPane,
-                                "An error occurred.", "Error", JOptionPane.ERROR_MESSAGE);
-                    } else if (returnVal == JFileChooser.APPROVE_OPTION) {
-                        File chosenFile = fileChooser.getSelectedFile();
-
-                        try {
-                            FileQuestionsInterface fQInterface = new FileQuestionsInterface(settings,
-                                    chosenFile.getAbsolutePath());
-                            QuestionList questionsFromFile = fQInterface.getQuestionList();
-                            parentScrollPane.addFilterQuestionsPanel(questionsFromFile);
-                            parentScrollPane.getCardPanelLayout().show(
-                                    parentScrollPane.getCardPanel(), "homeFilterQuestionsPanel");
-                        } catch (InvalidQuestionFileException exc) {
-                            CommonDialogs.showInvalidFileDialog(parentScrollPane, exc);
-                        } catch (FileNotFoundException exc) {
+                        if (returnVal == JFileChooser.ERROR_OPTION) {
                             JOptionPane.showMessageDialog(parentScrollPane,
-                                    "The selected file could not be found.", "Error", JOptionPane.ERROR_MESSAGE);
+                                    "An error occurred.", "Error", JOptionPane.ERROR_MESSAGE);
+                        } else if (returnVal == JFileChooser.APPROVE_OPTION) {
+                            File chosenFile = fileChooser.getSelectedFile();
+
+                            try {
+                                FileQuestionsInterface fQInterface = new FileQuestionsInterface(settings,
+                                        chosenFile.getAbsolutePath());
+                                QuestionList questionsFromFile = fQInterface.getQuestionList();
+                                parentScrollPane.addFilterQuestionsPanel(questionsFromFile);
+                                parentScrollPane.getCardPanelLayout().show(
+                                        parentScrollPane.getCardPanel(), "homeFilterQuestionsPanel");
+                            } catch (InvalidQuestionFileException exc) {
+                                CommonDialogs.showInvalidFileDialog(parentScrollPane, exc);
+                            } catch (FileNotFoundException exc) {
+                                JOptionPane.showMessageDialog(parentScrollPane,
+                                        "The selected file could not be found.", "Error", JOptionPane.ERROR_MESSAGE);
+                            }
                         }
+                        //TODO this is obviously not ideal
+                    } catch (Exception exception) {
+                        Main.displayUncaughtExceptionDialog(exception, "Not specified");
                     }
                 }
             }

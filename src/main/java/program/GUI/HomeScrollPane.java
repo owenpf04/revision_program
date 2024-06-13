@@ -1,5 +1,7 @@
 package program.GUI;
 
+import program.GUI.fileSelection.HomeSelectFilePanel;
+import program.GUI.questionFiltering.HomeFilterQuestionsPanel;
 import program.QuestionList;
 import program.Settings;
 
@@ -20,7 +22,12 @@ public class HomeScrollPane extends JScrollPane {
 
         cardPanel = new JPanel();
         setViewportView(cardPanel);
+        // fix for artifacting when scrolling backwards - BACKINGSTORE_SCROLL_MODE is stated to
+        // provide better performance (which makes sense), but requires significantly more RAM
+        // (around double the amount from my primitive testing)
+        getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
         getVerticalScrollBar().setUnitIncrement(16);
+        getHorizontalScrollBar().setUnitIncrement(16);
 
         cardPanelLayout = new CardLayout();
         cardPanel.setLayout(cardPanelLayout);

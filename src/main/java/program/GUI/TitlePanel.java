@@ -9,18 +9,18 @@ public class TitlePanel extends JPanel{
     private JLabel openFilePromptLabel;
     private JSeparator separator;
 
-    public TitlePanel(String titleMessage, int titleSize, String subtitleMessage, int subtitleSize) {
+    public TitlePanel(String titleMessage, String subtitleMessage) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(new EmptyBorder(0,0,30,0));
 
         greetingLabel = new JLabel();
         greetingLabel.setText(titleMessage);
-        greetingLabel.setFont(new Font("Bahnschrift", Font.BOLD, titleSize));
+        greetingLabel.putClientProperty("FlatLaf.styleClass", "h00");
         greetingLabel.setHorizontalAlignment(SwingConstants.LEFT);
         greetingLabel.setAlignmentX(LEFT_ALIGNMENT);
 
         openFilePromptLabel = new JLabel(subtitleMessage, SwingConstants.LEFT);
-        openFilePromptLabel.setFont(new Font("Bahnschrift", Font.PLAIN, subtitleSize));
+        openFilePromptLabel.putClientProperty("FlatLaf.styleClass", "h1.regular");
         openFilePromptLabel.setBorder(new EmptyBorder(0,0,15,0));
         openFilePromptLabel.setAlignmentX(LEFT_ALIGNMENT);
 

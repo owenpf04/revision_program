@@ -11,13 +11,6 @@ public class MainFrame extends JFrame {
     public MainFrame(Settings settings) {
         this.settings = settings;
 
-        UIManager.put("TabbedPane.tabHeight", 150);
-        UIManager.put("TabbedPane.font", new Font("Segoe UI", Font.BOLD, 16));
-        UIManager.put("TabbedPane.minimumTabWidth", 150);
-        UIManager.put("ScrollBar.width", 20);
-        UIManager.put("ScrollBar.thumbInsets", new Insets(3, 3, 3, 3));
-        UIManager.put("ScrollBar.thumbArc", 15);
-
         setTitle("This is a frame");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setMinimumSize(new Dimension(400,489));

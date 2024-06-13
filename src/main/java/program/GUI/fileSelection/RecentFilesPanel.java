@@ -1,8 +1,9 @@
-package program.GUI;
+package program.GUI.fileSelection;
 
 import org.kordamp.ikonli.carbonicons.CarbonIcons;
 import org.kordamp.ikonli.swing.FontIcon;
 import program.FileQuestionsInterface;
+import program.GUI.HomeScrollPane;
 import program.QuestionFile;
 import program.QuestionList;
 import program.Settings;
@@ -32,7 +33,7 @@ public class RecentFilesPanel extends JPanel {
         setLayout(new BorderLayout());
 
         openFilePromptLabel = new JLabel("Recent files", SwingConstants.LEFT);
-        openFilePromptLabel.setFont(new Font("Bahnschrift", Font.PLAIN, 36));
+        openFilePromptLabel.putClientProperty("FlatLaf.styleClass", "h0");
 
         recentFilesButtonsPanel = new RecentFilesButtonsPanel();
 
@@ -69,7 +70,7 @@ public class RecentFilesPanel extends JPanel {
 
             JLabel noRecentFilesLabel = new JLabel("You haven't opened any files " +
                     "recently. Select a file below.");
-            noRecentFilesLabel.setFont(new Font("Segoe UI", Font.PLAIN, 20));
+            noRecentFilesLabel.putClientProperty("FlatLaf.styleClass", "h2.regular");
             noRecentFilesLabel.setAlignmentX(CENTER_ALIGNMENT);
 
             add(Box.createVerticalGlue());
@@ -87,16 +88,17 @@ public class RecentFilesPanel extends JPanel {
             buttonPanel.setOpaque(false);
 
             JLabel fileNameLabel = new JLabel(questionFile.getFileName());
-            fileNameLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
+            fileNameLabel.putClientProperty("FlatLaf.styleClass", "h1");
+//            fileNameLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
             fileNameLabel.setBorder(new EmptyBorder(10,0,20,0));
 
             JLabel fileOpenedDateLabel = new JLabel("<html>Last opened: <br><i>" +
                     ReformatDate.describeInWords(questionFile.getLastOpened()) + " (" +
                     ReformatDate.formatAppropriately(questionFile.getLastOpened()) + ")</i></html>");
-            fileOpenedDateLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+            fileOpenedDateLabel.putClientProperty("FlatLaf.styleClass", "large");
 
             JLabel filePathLabel = new JLabel(questionFile.getFilePath());
-            filePathLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+            filePathLabel.putClientProperty("FlatLaf.styleClass", "monospaced");
             filePathLabel.setBorder(new EmptyBorder(5,0,10,0));
 
             buttonPanel.add(fileNameLabel, BorderLayout.NORTH);

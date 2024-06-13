@@ -1,4 +1,4 @@
-package program.GUI;
+package program.GUI.questionFiltering;
 
 import program.Question;
 import program.QuestionList;
@@ -7,18 +7,21 @@ import program.attributes.fields.QuestionNumericalAttribute;
 import program.helpers.ReformatString;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
+import javax.swing.table.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class QuestionsTablePanel extends JScrollPane {
+public class QuestionsTableScrollPane extends JScrollPane {
     private QuestionList questions;
     private JTable table;
     private DefaultTableModel tableModel;
 
-    public QuestionsTablePanel(QuestionList questions) {
+    public QuestionsTableScrollPane(QuestionList questions) {
+        // see HomeScrollPane for an explanation
+        getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
+        getVerticalScrollBar().setUnitIncrement(16);
+        getHorizontalScrollBar().setUnitIncrement(16);
+
         String[] headers = getTableHeaders();
         Object[][] data = questionListTo2DArray(questions);
 
@@ -50,11 +53,12 @@ public class QuestionsTablePanel extends JScrollPane {
                 }
             }
         };
-        tableModel.setDataVector(data, headers);
 
         table = new JTable(tableModel);
 
         table.setColumnSelectionAllowed(false);
+        table.setRowSelectionAllowed(false);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         table.setRowSorter(new TableRowSorter<>(tableModel));
 
         table.setFont(new Font("Segoe UI", Font.PLAIN, 16));
@@ -62,6 +66,8 @@ public class QuestionsTablePanel extends JScrollPane {
 
         table.setShowHorizontalLines(true);
         table.setRowHeight(30);
+
+        setColumnWidths();
 
         this.setViewportView(table);
     }
@@ -104,6 +110,7 @@ public class QuestionsTablePanel extends JScrollPane {
         return returnArray;
     }
 
+    //TODO similar loop to getTableHeaders, can they be combined?
     private static Object[] questionToArray(Question question) {
         QuestionAttribute[] qAttributes = QuestionAttribute.values();
         QuestionNumericalAttribute[] qNAttributes = QuestionNumericalAttribute.values();
@@ -131,5 +138,51 @@ public class QuestionsTablePanel extends JScrollPane {
     public void updateData(QuestionList questions) {
         this.questions = questions;
         tableModel.setDataVector(questionListTo2DArray(questions), getTableHeaders());
+        setColumnWidths();
+    }
+
+    private void setColumnWidths() {
+        setColumnWidthToHeaderWidth(0);
+        setColumnWidthToHeaderWidth(1);
+
+        int qAttributesLength = QuestionAttribute.values().length;
+        int qNAttributesLength = QuestionNumericalAttribute.values().length;
+
+        int i;
+        for (i = 0; i < qAttributesLength; i++) {
+            TableColumn column = table.getColumnModel().getColumn(i + 2);
+            switch (i + 2) {
+                case 2 -> {
+                    column.setPreferredWidth(400);
+                }
+                case 3, 5 -> {
+                    column.setPreferredWidth(150);
+                }
+                default -> {
+                    setColumnWidthToHeaderWidth(i + 2);
+                }
+            }
+        }
+
+        for (int j = 1; j < qNAttributesLength; j++) {
+            setColumnWidthToHeaderWidth(1 + i + j);
+        }
+    }
+
+    private void setColumnWidthToHeaderWidth(int index) {
+        TableColumn column = table.getColumnModel().getColumn(index);
+        column.setPreferredWidth(getHeaderWidth(index, column) + 25);
+    }
+
+    private int getHeaderWidth(int index, TableColumn column) {
+        TableCellRenderer renderer = column.getHeaderRenderer();
+
+        if (renderer == null) {
+            renderer = table.getTableHeader().getDefaultRenderer();
+        }
+
+        Component header = renderer.getTableCellRendererComponent(table, column.getHeaderValue(),
+                false, false, -1, index);
+        return header.getPreferredSize().width;
     }
 }

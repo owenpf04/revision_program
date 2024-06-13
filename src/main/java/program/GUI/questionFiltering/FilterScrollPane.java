@@ -1,4 +1,4 @@
-package program.GUI;
+package program.GUI.questionFiltering;
 
 import org.kordamp.ikonli.carbonicons.CarbonIcons;
 import org.kordamp.ikonli.swing.FontIcon;
@@ -7,26 +7,28 @@ import program.attributes.fields.QuestionAttribute;
 import program.helpers.ReformatString;
 
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
-import java.util.List;
 
 public class FilterScrollPane extends JScrollPane {
     private QuestionList questionsFromFile;
-    private QuestionsTablePanel tablePanel;
+    private QuestionsTableScrollPane tablePanel;
 
     private ArrayList<Filter> filters;
 
-    public FilterScrollPane(QuestionList questionsFromFile, QuestionsTablePanel tablePanel) {
+    public FilterScrollPane(QuestionList questionsFromFile, QuestionsTableScrollPane tablePanel) {
         this.questionsFromFile = questionsFromFile;
         this.tablePanel = tablePanel;
         this.filters = new ArrayList<>();
 
+        // see HomeScrollPane for an explanation
+        getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
         getVerticalScrollBar().setUnitIncrement(16);
+        getHorizontalScrollBar().setUnitIncrement(16);
+        setPreferredSize(new Dimension(400,600));
 
         JPanel innerPanel = new JPanel(new GridBagLayout());
 
@@ -56,7 +58,6 @@ public class FilterScrollPane extends JScrollPane {
     }
 
     private class Filter extends JPanel {
-        private JPanel mainPanel;
         private JButton headingButton;
         private boolean expanded;
         private QuestionAttribute attribute;
@@ -72,11 +73,8 @@ public class FilterScrollPane extends JScrollPane {
 
             setLayout(new BorderLayout());
 
-            mainPanel = new JPanel(new BorderLayout());
             headingButton = createHeadingButton();
-
-            mainPanel.add(headingButton, BorderLayout.NORTH);
-            add(mainPanel, BorderLayout.CENTER);
+            add(headingButton, BorderLayout.NORTH);
         }
 
         public JButton createHeadingButton() {
@@ -88,7 +86,7 @@ public class FilterScrollPane extends JScrollPane {
             Icon icon = expanded ? FontIcon.of(CarbonIcons.SUBTRACT_ALT, 25):
                     FontIcon.of(CarbonIcons.ADD_ALT, 25);
             buttonLabel.setIcon(icon);
-            buttonLabel.setIconTextGap(10);
+            buttonLabel.setIconTextGap(15);
             buttonLabel.setFont(new Font("Bahnschrift", Font.PLAIN, 24));
 
             button.add(buttonLabel);
@@ -103,18 +101,19 @@ public class FilterScrollPane extends JScrollPane {
                 if (expanded) {
                     expanded = false;
 
-                    mainPanel.removeAll();
+                    removeAll();
                     headingButton = createHeadingButton();
-                    mainPanel.add(headingButton, BorderLayout.NORTH);
+                    add(headingButton, BorderLayout.NORTH);
                 } else {
                     expanded = true;
 
-                    mainPanel.removeAll();
+                    removeAll();
                     headingButton = createHeadingButton();
-                    mainPanel.add(headingButton, BorderLayout.NORTH);
+                    add(headingButton, BorderLayout.NORTH);
 
                     JPanel checkboxPanel = new JPanel();
                     checkboxPanel.setLayout(new BoxLayout(checkboxPanel, BoxLayout.Y_AXIS));
+                    checkboxPanel.setBorder(new EmptyBorder(0,30,5,5));
                     for (String option : options) {
                         JCheckBox checkBox = new JCheckBox(option);
                         if (selectedOptions.contains(option)) {
@@ -127,7 +126,7 @@ public class FilterScrollPane extends JScrollPane {
                         checkboxPanel.add(checkBox);
                     }
 
-                    mainPanel.add(checkboxPanel, BorderLayout.CENTER);
+                    add(checkboxPanel, BorderLayout.CENTER);
                 }
             }
         }

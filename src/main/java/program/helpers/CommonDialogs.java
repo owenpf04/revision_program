@@ -25,7 +25,7 @@ public class CommonDialogs {
                 "\"\nDescription:   " + ReformatString.wrapString(e.getDescription(), 60, 15);
         JTextArea details = new JTextArea(detailsMessage);
         details.setEditable(false);
-        details.setFont(new Font(FlatJetBrainsMonoFont.FAMILY, Font.PLAIN, 12));
+        details.putClientProperty("FlatLaf.styleClass", "monospaced");
         details.setBorder(new EmptyBorder(20,0,0,0));
 
         mainPanel.add(details);

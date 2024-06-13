@@ -1,5 +1,6 @@
 package program;
 
+import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.fonts.jetbrains_mono.FlatJetBrainsMonoFont;
 import com.formdev.flatlaf.intellijthemes.FlatSolarizedLightIJTheme;
 import program.GUI.MainFrame;
@@ -42,8 +43,10 @@ public class Main {
      *         command-line arguments.
      */
     public static void main(String[] args) {
-        FlatSolarizedLightIJTheme.setup();
         FlatJetBrainsMonoFont.install();
+        FlatLaf.setPreferredMonospacedFontFamily(FlatJetBrainsMonoFont.FAMILY);
+        FlatLaf.registerCustomDefaultsSource( "FlatLafThemes");
+        FlatSolarizedLightIJTheme.setup();
 
         // Exception catching here is a fallback, it should be done in each of the individual methods
         // first
@@ -145,7 +148,7 @@ public class Main {
         return requestUseDefaults(message, null);
     }
 
-    private static void displayUncaughtExceptionDialog(Exception e, String description) {
+    public static void displayUncaughtExceptionDialog(Exception e, String description) {
         //TODO update contact details
         JPanel mainPanel = new JPanel(new BorderLayout());
 
