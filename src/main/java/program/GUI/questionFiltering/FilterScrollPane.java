@@ -4,6 +4,7 @@ import org.kordamp.ikonli.carbonicons.CarbonIcons;
 import org.kordamp.ikonli.swing.FontIcon;
 import program.QuestionList;
 import program.attributes.fields.QuestionAttribute;
+import program.helpers.Misc;
 import program.helpers.ReformatString;
 
 import javax.swing.*;
@@ -43,7 +44,6 @@ public class FilterScrollPane extends JScrollPane {
         setViewportView(innerPanel);
 
         QuestionAttribute[] attributes = QuestionAttribute.valuesReversed();
-        System.out.println(attributes.length);
         for (int i = 0; i < attributes.length - 1; i++) {
             gbc.gridy = i;
             Filter filter = new Filter(attributes[i]);
@@ -83,11 +83,13 @@ public class FilterScrollPane extends JScrollPane {
 
             JLabel buttonLabel = new JLabel(ReformatString.toPlainText(attribute.toString(),
                     false), SwingConstants.LEFT);
-            Icon icon = expanded ? FontIcon.of(CarbonIcons.SUBTRACT_ALT, 25):
-                    FontIcon.of(CarbonIcons.ADD_ALT, 25);
+            Icon icon = expanded ? FontIcon.of(CarbonIcons.SUBTRACT_ALT, 25,
+                    Misc.getUIManagerColor("colorForeground")):
+                    FontIcon.of(CarbonIcons.ADD_ALT, 25,
+                            Misc.getUIManagerColor("colorForeground"));
             buttonLabel.setIcon(icon);
             buttonLabel.setIconTextGap(15);
-            buttonLabel.setFont(new Font("Bahnschrift", Font.PLAIN, 24));
+            buttonLabel.putClientProperty("FlatLaf.styleClass", "h1.regular");
 
             button.add(buttonLabel);
             button.addActionListener(new HeadingButtonListener());
@@ -119,10 +121,8 @@ public class FilterScrollPane extends JScrollPane {
                         if (selectedOptions.contains(option)) {
                             checkBox.setSelected(true);
                         }
+                        Misc.updateCheckboxIcons(checkBox, 21);
                         checkBox.addActionListener(new CheckboxListener());
-                        checkBox.setIcon(FontIcon.of(CarbonIcons.CHECKBOX, 21));
-                        checkBox.setSelectedIcon(FontIcon.of(CarbonIcons.CHECKBOX_CHECKED_FILLED, 21));
-                        checkBox.setFont(new Font("Segoe UI", Font.PLAIN, 16));
                         checkboxPanel.add(checkBox);
                     }
 

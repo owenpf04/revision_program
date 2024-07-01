@@ -4,6 +4,7 @@ import program.GUI.fileSelection.HomeSelectFilePanel;
 import program.GUI.questionFiltering.HomeFilterQuestionsPanel;
 import program.QuestionList;
 import program.Settings;
+import program.helpers.Misc;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -18,7 +19,7 @@ public class HomeScrollPane extends JScrollPane {
 
     public HomeScrollPane(Settings settings) {
         this.settings = settings;
-        setBackground(new Color(238,232,213));
+        setBackground(Misc.getUIManagerColor("colorMenuBackground"));
 
         cardPanel = new JPanel();
         setViewportView(cardPanel);

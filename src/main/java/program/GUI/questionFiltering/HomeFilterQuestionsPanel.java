@@ -4,6 +4,7 @@ import org.kordamp.ikonli.carbonicons.CarbonIcons;
 import org.kordamp.ikonli.swing.FontIcon;
 import program.GUI.TitlePanel;
 import program.QuestionList;
+import program.helpers.Misc;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -28,17 +29,21 @@ public class HomeFilterQuestionsPanel extends JPanel {
 
         JPanel navButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton backButton = new JButton("Back to file selection",
-                FontIcon.of(CarbonIcons.ARROW_LEFT, 30));
+                FontIcon.of(CarbonIcons.ARROW_LEFT, 30,
+                        Misc.getUIManagerColor("colorForeground")));
         backButton.setIconTextGap(10);
-        backButton.setPreferredSize(new Dimension(260,80));
-        backButton.setFont(new Font("Segoe UI", Font.PLAIN, 20));
+        backButton.setPreferredSize(new Dimension(270,50));
+        backButton.putClientProperty("FlatLaf.styleClass", "h2.regular");
 
         JButton continueButton = new JButton("Continue with selected questions",
-                FontIcon.of(CarbonIcons.ARROW_RIGHT, 30));
+                FontIcon.of(CarbonIcons.ARROW_RIGHT, 30,
+                        Misc.getUIManagerColor("colorSelectionForeground")));
         continueButton.setHorizontalTextPosition(SwingConstants.LEFT);
         continueButton.setIconTextGap(10);
-        continueButton.setPreferredSize(new Dimension(400,80));
-        continueButton.setFont(new Font("Segoe UI", Font.PLAIN, 20));
+        continueButton.setPreferredSize(new Dimension(380,50));
+        continueButton.putClientProperty("FlatLaf.styleClass", "h2.regular");
+        continueButton.setBackground(Misc.getUIManagerColor("colorSelectionBackground"));
+        continueButton.setForeground(Misc.getUIManagerColor("colorSelectionForeground"));
 
         navButtonPanel.add(backButton);
         navButtonPanel.add(continueButton);

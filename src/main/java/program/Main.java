@@ -22,6 +22,8 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
 
 
 /**
@@ -163,7 +165,7 @@ public class Main {
         details.setFont(new Font(FlatJetBrainsMonoFont.FAMILY, Font.PLAIN, 12));
         details.setBorder(new EmptyBorder(0,0,20,0));
 
-        String finalMessage = "Please send me an email at owenpf@outlook.com with these details. " +
+        String finalMessage = "Please send me an email at owenpf.work@gmail.com with these details. " +
                 "The program will now exit.";
         JLabel finalLabel = new JLabel(finalMessage);
 

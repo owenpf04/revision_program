@@ -4,6 +4,7 @@ import program.Question;
 import program.QuestionList;
 import program.attributes.fields.QuestionAttribute;
 import program.attributes.fields.QuestionNumericalAttribute;
+import program.helpers.Misc;
 import program.helpers.ReformatString;
 
 import javax.swing.*;
@@ -60,14 +61,17 @@ public class QuestionsTableScrollPane extends JScrollPane {
         table.setRowSelectionAllowed(false);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         table.setRowSorter(new TableRowSorter<>(tableModel));
+        table.putClientProperty("FlatLaf.styleClass", "large");
 
-        table.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        table.getTableHeader().setPreferredSize(new Dimension(1500,40));
+        table.getTableHeader().putClientProperty("FlatLaf.styleClass", "h1.regular");
         table.getTableHeader().setFont(new Font("Bahnschrift", Font.PLAIN, 20));
 
         table.setShowHorizontalLines(true);
         table.setRowHeight(30);
 
         setColumnWidths();
+//        updateFirstColumnCheckboxes();
 
         this.setViewportView(table);
     }
@@ -184,5 +188,15 @@ public class QuestionsTableScrollPane extends JScrollPane {
         Component header = renderer.getTableCellRendererComponent(table, column.getHeaderValue(),
                 false, false, -1, index);
         return header.getPreferredSize().width;
+    }
+
+    private void updateFirstColumnCheckboxes() {
+        TableCellRenderer renderer = table.getDefaultRenderer(Boolean.class);
+        JCheckBox checkBoxRenderer = (JCheckBox) renderer;
+        Misc.updateCheckboxIcons(checkBoxRenderer, 21);
+
+        DefaultCellEditor editor = (DefaultCellEditor)table.getDefaultEditor(Boolean.class);
+        JCheckBox checkBoxEditor = (JCheckBox)editor.getComponent();
+        Misc.updateCheckboxIcons(checkBoxEditor, 21);
     }
 }

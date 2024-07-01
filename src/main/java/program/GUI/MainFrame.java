@@ -1,6 +1,7 @@
 package program.GUI;
 
 import program.Settings;
+import program.helpers.Misc;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,8 +23,8 @@ public class MainFrame extends JFrame {
         setSize(screenWidth * 3 / 4, screenHeight * 3 / 4);
 
         JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBackground(new Color(37,39,40));
-        mainPanel.add(new MainTabbedPane(new Color(37,39,40), settings), BorderLayout.CENTER);
+        mainPanel.setBackground(Misc.getUIManagerColor("colorMenuBackground"));
+        mainPanel.add(new MainTabbedPane(Misc.getUIManagerColor("colorMenuBackground"), settings), BorderLayout.CENTER);
 
         add(mainPanel);
         setVisible(true);
