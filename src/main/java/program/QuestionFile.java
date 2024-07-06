@@ -1,5 +1,6 @@
 package program;
 
+import java.io.File;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 import java.time.DateTimeException;
@@ -12,9 +13,9 @@ public class QuestionFile implements Comparable<QuestionFile>{
 
     public QuestionFile(String filePath, String dateTime) throws IllegalArgumentException {
         try {
-            Paths.get(filePath);
-            this.filePath = filePath;
-            this.fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
+            this.filePath = Paths.get(filePath).toString();
+            this.fileName = this.filePath.substring(
+                    this.filePath.lastIndexOf(File.separator) + 1);
         } catch (InvalidPathException e) {
             throw new IllegalArgumentException("\"" + filePath + "\" cannot be interpreted as a " +
                     "file/directory path.");

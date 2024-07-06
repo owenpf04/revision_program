@@ -24,8 +24,6 @@ public class FileQuestionsInterface {
             "Index,Title,Topic,Paper or unit,Subject,Qualification level," +
                     "Exam board,Attempted,Correct,Percentage,Expected times asked," +
                     "Likelihood";
-
-    private final Settings settings;
     private final String fileLocation;
     private final QuestionList questionsFromFile;
 
@@ -41,9 +39,8 @@ public class FileQuestionsInterface {
      *         if the file at the provided {@code fileLocation} could not be entirely parsed for any
      *         reason.
      */
-    public FileQuestionsInterface(Settings settings, String fileLocation) throws FileNotFoundException,
+    public FileQuestionsInterface(String fileLocation) throws FileNotFoundException,
             InvalidQuestionFileException{
-        this.settings = settings;
         this.fileLocation = fileLocation;
         this.questionsFromFile = createQuestionList();
     }
@@ -238,7 +235,7 @@ public class FileQuestionsInterface {
                     (String) questionAttributes[5], (String) questionAttributes[6],
                     (int) questionAttributes[7], (int) questionAttributes[8],
                     (double) questionAttributes[9],
-                    (double) questionAttributes[10], (double) questionAttributes[11], settings);
+                    (double) questionAttributes[10], (double) questionAttributes[11]);
         } catch (IllegalArgumentException e) {
             throw new InvalidQuestionFileException(line, e.getMessage());
         }

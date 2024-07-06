@@ -2,6 +2,7 @@ package program.GUI.questionFiltering;
 
 import org.kordamp.ikonli.carbonicons.CarbonIcons;
 import org.kordamp.ikonli.swing.FontIcon;
+import program.GUI.HomeScrollPane;
 import program.GUI.TitlePanel;
 import program.QuestionList;
 import program.helpers.Misc;
@@ -9,12 +10,17 @@ import program.helpers.Misc;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class HomeFilterQuestionsPanel extends JPanel {
     private QuestionList questionsFromFile;
+    private HomeScrollPane parentScrollPane;
 
-    public HomeFilterQuestionsPanel(QuestionList questionsFromFile) {
+    public HomeFilterQuestionsPanel(QuestionList questionsFromFile, HomeScrollPane parentScrollPane) {
         this.questionsFromFile = questionsFromFile;
+        this.parentScrollPane = parentScrollPane;
+
         setLayout(new BorderLayout());
         setBorder(new EmptyBorder(20,20,20,20));
 
@@ -34,6 +40,12 @@ public class HomeFilterQuestionsPanel extends JPanel {
         backButton.setIconTextGap(10);
         backButton.setPreferredSize(new Dimension(270,50));
         backButton.putClientProperty("FlatLaf.styleClass", "h2.regular");
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                parentScrollPane.showSelectFilePanel();
+            }
+        });
 
         JButton continueButton = new JButton("Continue with selected questions",
                 FontIcon.of(CarbonIcons.ARROW_RIGHT, 30,

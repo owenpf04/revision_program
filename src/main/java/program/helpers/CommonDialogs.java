@@ -19,10 +19,10 @@ public class CommonDialogs {
         mainPanel.add(mainErrorMessage);
 
         String detailsMessage = "File location: " +
-                ReformatString.wrapString(e.getFileLocation(), 60, 15) +
+                ReformatString.wrapString(e.getFileLocation(), 60, 15, false) +
                 "\nLine number:   " + e.getLineNumber() +
-                "\nLine:          \"" + ReformatString.wrapString(e.getLine(), 60, 15) +
-                "\"\nDescription:   " + ReformatString.wrapString(e.getDescription(), 60, 15);
+                "\nLine:          \"" + ReformatString.wrapString(e.getLine(), 60, 15, false) +
+                "\"\nDescription:   " + ReformatString.wrapString(e.getDescription(), 60, 15, false);
         JTextArea details = new JTextArea(detailsMessage);
         details.setEditable(false);
         details.putClientProperty("FlatLaf.styleClass", "monospaced");

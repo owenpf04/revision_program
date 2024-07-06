@@ -157,7 +157,7 @@ public class ReformatString {
         return arrayToReturn;
     }
 
-    public static String wrapString(String toWrap, int wrapLength, int offset) {
+    public static String wrapString(String toWrap, int wrapLength, int offset, boolean htmlFormat) {
         ArrayList<Integer> indexesToWrapAt = new ArrayList<>();
         indexesToWrapAt.add(0);
 
@@ -173,14 +173,29 @@ public class ReformatString {
         }
 
         String returnString = "";
+
         for (int i = 1; i < indexesToWrapAt.size(); i++) {
-            returnString += toWrap.substring(indexesToWrapAt.get(i - 1), indexesToWrapAt.get(i));
-            returnString += ("\n" + " ".repeat(offset - 1));
+            String toAdd = toWrap.substring(indexesToWrapAt.get(i - 1), indexesToWrapAt.get(i));
+            if (toAdd.startsWith(" ")) {
+                toAdd = toAdd.substring(1);
+            }
+
+            returnString += toAdd;
+            if (htmlFormat) {
+                returnString += "<br>";
+            } else {
+                returnString += "\n";
+            }
+            returnString += " ".repeat(offset);
             if (toWrap.charAt(indexesToWrapAt.get(i)) != ' ') {
                 returnString += " ";
             }
         }
-        returnString += toWrap.substring(indexesToWrapAt.get(indexesToWrapAt.size() - 1));
+        String toAdd = toWrap.substring(indexesToWrapAt.get(indexesToWrapAt.size() - 1));
+        if (toAdd.startsWith(" ")) {
+            toAdd = toAdd.substring(1);
+        }
+        returnString += toAdd;
 
         return returnString;
     }

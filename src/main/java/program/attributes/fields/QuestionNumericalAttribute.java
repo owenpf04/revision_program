@@ -92,7 +92,7 @@ public enum QuestionNumericalAttribute {
      */
     public static void assertAttributesValid(int index, int attempted, int correct,
             double percentage,
-            double expectedTimesAsked, double likelihood, Settings settings) throws
+            double expectedTimesAsked, double likelihood) throws
             InvalidQuestionNumericalAttributeException {
         assertAttributeNotLessThanZero(index, INDEX);
         assertAttributeNotLessThanZero(attempted, ATTEMPTED);
@@ -131,7 +131,7 @@ public enum QuestionNumericalAttribute {
         double roundedFileLikelihood = Double.parseDouble(String.format("%.2f", likelihood));
 
         double calcLikelihood = Question.calculateLikelihood(attempted, percentage,
-                expectedTimesAsked, settings);
+                expectedTimesAsked);
         calcLikelihood = Double.parseDouble(String.format("%.2f", calcLikelihood));
 
         if (roundedFileLikelihood != calcLikelihood) {

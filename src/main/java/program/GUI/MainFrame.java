@@ -7,11 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class MainFrame extends JFrame {
-    private Settings settings;
-
-    public MainFrame(Settings settings) {
-        this.settings = settings;
-
+    public MainFrame() {
         setTitle("This is a frame");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setMinimumSize(new Dimension(400,489));
@@ -24,7 +20,7 @@ public class MainFrame extends JFrame {
 
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBackground(Misc.getUIManagerColor("colorMenuBackground"));
-        mainPanel.add(new MainTabbedPane(Misc.getUIManagerColor("colorMenuBackground"), settings), BorderLayout.CENTER);
+        mainPanel.add(new MainTabbedPane(Misc.getUIManagerColor("colorMenuBackground")), BorderLayout.CENTER);
 
         add(mainPanel);
         setVisible(true);

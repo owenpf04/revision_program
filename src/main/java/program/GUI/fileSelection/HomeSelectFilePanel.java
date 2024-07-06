@@ -5,7 +5,7 @@ import org.kordamp.ikonli.swing.FontIcon;
 import program.FileQuestionsInterface;
 import program.GUI.HomeScrollPane;
 import program.GUI.TitlePanel;
-import program.Main;
+import program.GUI.questionFiltering.HomeFilterQuestionsPanel;
 import program.QuestionList;
 import program.Settings;
 import program.exceptions.InvalidQuestionFileException;
@@ -26,10 +26,8 @@ public class HomeSelectFilePanel extends JPanel {
     private JPanel titlePanel;
     private JPanel filePanel;
     private HomeScrollPane parentScrollPane;
-    private Settings settings;
 
-    public HomeSelectFilePanel(HomeScrollPane parentScrollPane, Settings settings) {
-        this.settings = settings;
+    public HomeSelectFilePanel(HomeScrollPane parentScrollPane) {
         this.parentScrollPane = parentScrollPane;
 
         setBorder(new EmptyBorder(20,20,20,20));
@@ -42,9 +40,16 @@ public class HomeSelectFilePanel extends JPanel {
         add(filePanel, BorderLayout.CENTER);
     }
 
+    public void updateRecentFiles() {
+        remove(filePanel);
+        filePanel = new FilePanel();
+        add(filePanel, BorderLayout.CENTER);
+        repaint();
+    }
+
     private String getGreetingMessage() {
         return ("Good " + ReformatDate.getTimeOfDay(LocalDateTime.now(), false) +
-                ", " + settings.getUserName());
+                ", " + Settings.getUserName());
     }
 
     private class FilePanel extends JPanel {
@@ -54,7 +59,7 @@ public class HomeSelectFilePanel extends JPanel {
         public FilePanel() {
             setLayout(new BorderLayout());
 
-            recentFilesPanel = new RecentFilesPanel(settings, parentScrollPane);
+            recentFilesPanel = new RecentFilesPanel(parentScrollPane);
             recentFilesPanel.setBorder(new EmptyBorder(0,0,20,0));
             openFilePanel = new OpenFilePanel();
 
@@ -90,41 +95,46 @@ public class HomeSelectFilePanel extends JPanel {
             private class chooseFileActionListener implements ActionListener {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    try {
-                        JFileChooser fileChooser = new JFileChooser(settings.getDefaultFileOpeningDirectory());
-                        fileChooser.setAcceptAllFileFilterUsed(false);
-                        FileNameExtensionFilter filter = new FileNameExtensionFilter(
-                                ".csv files", "csv");
-                        fileChooser.setFileFilter(filter);
+                    JFileChooser fileChooser = new JFileChooser(Settings.getDefaultFileOpeningDirectory());
+                    fileChooser.setAcceptAllFileFilterUsed(false);
+                    FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                            ".csv files", "csv");
+                    fileChooser.setFileFilter(filter);
 
-                        Action details = fileChooser.getActionMap().get("viewTypeDetails");
-                        details.actionPerformed(null);
+                    Action details = fileChooser.getActionMap().get("viewTypeDetails");
+                    details.actionPerformed(null);
 
-                        int returnVal = fileChooser.showOpenDialog(parentScrollPane);
+                    int returnVal = fileChooser.showOpenDialog(parentScrollPane);
 
-                        if (returnVal == JFileChooser.ERROR_OPTION) {
+                    if (returnVal == JFileChooser.ERROR_OPTION) {
+                        JOptionPane.showMessageDialog(parentScrollPane,
+                                "An error occurred.", "Error", JOptionPane.ERROR_MESSAGE);
+                    } else if (returnVal == JFileChooser.APPROVE_OPTION) {
+                        File chosenFile = fileChooser.getSelectedFile();
+
+                        try {
+                            FileQuestionsInterface fQInterface =
+                                    new FileQuestionsInterface(chosenFile.getAbsolutePath());
+                            QuestionList questionsFromFile = fQInterface.getQuestionList();
+
+                            Settings.addRecentFile(chosenFile.getAbsolutePath());
+
+                            parentScrollPane.showFilterQuestionsPanel(questionsFromFile);
+//                            parentScrollPane.getInnerPanel().remove();
+//                            parentScrollPane.getInnerPanel().add(
+//                                    new HomeFilterQuestionsPanel(questionsFromFile, parentScrollPane),
+//                                    "homeFilterQuestionsPanel");
+//                            parentScrollPane.getCardPanelLayout().show(
+//                                    parentScrollPane.getInnerPanel(),
+//                                    "homeFilterQuestionsPanel");
+                        } catch (InvalidQuestionFileException exc) {
+                            CommonDialogs.showInvalidFileDialog(parentScrollPane, exc);
+                        } catch (FileNotFoundException exc) {
                             JOptionPane.showMessageDialog(parentScrollPane,
-                                    "An error occurred.", "Error", JOptionPane.ERROR_MESSAGE);
-                        } else if (returnVal == JFileChooser.APPROVE_OPTION) {
-                            File chosenFile = fileChooser.getSelectedFile();
+                                    "The selected file could not be found.", "Error", JOptionPane.ERROR_MESSAGE);
+                        } catch (Exception exc) {
 
-                            try {
-                                FileQuestionsInterface fQInterface = new FileQuestionsInterface(settings,
-                                        chosenFile.getAbsolutePath());
-                                QuestionList questionsFromFile = fQInterface.getQuestionList();
-                                parentScrollPane.addFilterQuestionsPanel(questionsFromFile);
-                                parentScrollPane.getCardPanelLayout().show(
-                                        parentScrollPane.getCardPanel(), "homeFilterQuestionsPanel");
-                            } catch (InvalidQuestionFileException exc) {
-                                CommonDialogs.showInvalidFileDialog(parentScrollPane, exc);
-                            } catch (FileNotFoundException exc) {
-                                JOptionPane.showMessageDialog(parentScrollPane,
-                                        "The selected file could not be found.", "Error", JOptionPane.ERROR_MESSAGE);
-                            }
                         }
-                        //TODO this is obviously not ideal
-                    } catch (Exception exception) {
-                        Main.displayUncaughtExceptionDialog(exception, "Not specified");
                     }
                 }
             }

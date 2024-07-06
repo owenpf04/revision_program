@@ -52,7 +52,7 @@ public class Question {
      */
     public Question(int index, String title, String topic, String paperUnit, String subject,
             String qualLevel, String examBoard, int attempted, int correct, double percentage,
-            double expectedTimesAsked, double likelihood, Settings settings) throws IllegalArgumentException {
+            double expectedTimesAsked, double likelihood) throws IllegalArgumentException {
         String[] qAtts = {title, topic, paperUnit, subject, qualLevel, examBoard};
         qAtts = ReformatString.removeWhitespaceAndQuotes(qAtts);
         try {
@@ -73,7 +73,7 @@ public class Question {
 
         try {
             QuestionNumericalAttribute.assertAttributesValid(index, attempted, correct, percentage,
-                    expectedTimesAsked, likelihood, settings);
+                    expectedTimesAsked, likelihood);
         } catch (InvalidQuestionNumericalAttributeException e) {
             //TODO this needs changing as it is CLI-specific
             if (e.getAttribute() == QuestionNumericalAttribute.PERCENTAGE || e.getAttribute() ==
@@ -98,7 +98,7 @@ public class Question {
             percentage = 100 * ((double) correct / attempted);
         }
         numericalAttributeNumberMap.put(QuestionNumericalAttribute.PERCENTAGE, percentage);
-        likelihood = calculateLikelihood(attempted, percentage, expectedTimesAsked, settings);
+        likelihood = calculateLikelihood(attempted, percentage, expectedTimesAsked);
         numericalAttributeNumberMap.put(QuestionNumericalAttribute.LIKELIHOOD, likelihood);
 
         this.attributeStringMap = attributeStringMap;
@@ -163,20 +163,20 @@ public class Question {
     }
 
     public static double calculateLikelihood(int attempted, double percentage,
-            double expectedTimesAsked, Settings settings) {
+            double expectedTimesAsked) {
         if (expectedTimesAsked == 0) {
             return 0;
         }
         double calcLikelihoodPercentComp = 100 - percentage;
         double calcLikelihoodTimesAskedComp = 50 - ((50 * (attempted - expectedTimesAsked)) /
-                (((settings.getTimesAskedPercentageOffset() /
+                (((Settings.getTimesAskedPercentageOffset() /
                         100) * expectedTimesAsked) +
-                        settings.getTimesAskedAbsoluteOffset()));
+                        Settings.getTimesAskedAbsoluteOffset()));
         calcLikelihoodTimesAskedComp = Math.max(calcLikelihoodTimesAskedComp, 0);
         calcLikelihoodTimesAskedComp = Math.min(calcLikelihoodTimesAskedComp, 100);
         double calculatedLikelihood =
-                ((settings.getPercentageWeighting() * calcLikelihoodPercentComp) +
-                        calcLikelihoodTimesAskedComp) / (settings.getPercentageWeighting() + 1);
+                ((Settings.getPercentageWeighting() * calcLikelihoodPercentComp) +
+                        calcLikelihoodTimesAskedComp) / (Settings.getPercentageWeighting() + 1);
         return calculatedLikelihood;
     }
 
@@ -204,7 +204,7 @@ public class Question {
         double percentage = this.getPercentage();
 
         expectedTimesAsked += (double) 1 / questionsInPool;
-        double likelihood = calculateLikelihood(attempted, percentage, expectedTimesAsked, settings);
+        double likelihood = calculateLikelihood(attempted, percentage, expectedTimesAsked);
 
         numericalAttributeNumberMap.put(QuestionNumericalAttribute.EXPECTED_TIMES_ASKED,
                 expectedTimesAsked);

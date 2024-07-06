@@ -17,17 +17,15 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
-import java.util.Set;
+import java.util.List;
 
 public class RecentFilesPanel extends JPanel {
-    private Settings settings;
     private HomeScrollPane parentScrollPane;
 
     private JLabel openFilePromptLabel;
     private JPanel recentFilesButtonsPanel;
 
-    public RecentFilesPanel(Settings settings, HomeScrollPane parentScrollPane) {
-        this.settings = settings;
+    public RecentFilesPanel(HomeScrollPane parentScrollPane) {
         this.parentScrollPane = parentScrollPane;
 
         setLayout(new BorderLayout());
@@ -43,13 +41,13 @@ public class RecentFilesPanel extends JPanel {
 
     private class RecentFilesButtonsPanel extends JPanel {
         public RecentFilesButtonsPanel() {
-            if (!settings.hasRecentFiles()) {
+            if (!Settings.hasRecentFiles()) {
                 createNoRecentFilesPanel();
             } else {
                 setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
                 JPanel recentButtonsPanel = new JPanel();
                 recentButtonsPanel.setLayout(new BoxLayout(recentButtonsPanel, BoxLayout.Y_AXIS));
-                Set<QuestionFile> recentFiles = settings.getRecentFiles();
+                List<QuestionFile> recentFiles = Settings.getRecentFiles();
 
                 for (QuestionFile file : recentFiles) {
                     recentButtonsPanel.add(createRecentFilesButtonPanel(file));
@@ -122,23 +120,29 @@ public class RecentFilesPanel extends JPanel {
             addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                        try {
-                            FileQuestionsInterface fQInterface = new FileQuestionsInterface(settings,
-                                    questionFile.getFilePath());
-                            QuestionList questionsFromFile = fQInterface.getQuestionList();
-                            parentScrollPane.addFilterQuestionsPanel(questionsFromFile);
-                            parentScrollPane.getCardPanelLayout().show(
-                                    parentScrollPane.getCardPanel(), "homeFilterQuestionsPanel");
-                        } catch (InvalidQuestionFileException exc) {
-                            CommonDialogs.showInvalidFileDialog(parentScrollPane, exc);
-                        } catch (FileNotFoundException exc) {
-                            settings.getRecentFiles().remove(questionFile);
-                            RecentFilesPanel.this.remove(1);
-                            RecentFilesPanel.this.add(new RecentFilesButtonsPanel());
-                            JOptionPane.showMessageDialog(parentScrollPane,
-                                    "The selected file could not be found.", "Error", JOptionPane.ERROR_MESSAGE);
-                            //TODO: remove question details from app.properties
-                        }
+                    try {
+                        FileQuestionsInterface fQInterface = new FileQuestionsInterface(
+                                questionFile.getFilePath());
+                        QuestionList questionsFromFile = fQInterface.getQuestionList();
+
+                        Settings.addRecentFile(questionFile.getFilePath());
+
+                        parentScrollPane.showFilterQuestionsPanel(questionsFromFile);
+//                        parentScrollPane.addFilterQuestionsPanel(questionsFromFile);
+//                        parentScrollPane.getCardPanelLayout().show(
+//                                parentScrollPane.getInnerPanel(), "homeFilterQuestionsPanel");
+                    } catch (InvalidQuestionFileException exc) {
+                        CommonDialogs.showInvalidFileDialog(parentScrollPane, exc);
+                    } catch (FileNotFoundException exc) {
+                        Settings.getRecentFiles().remove(questionFile);
+                        RecentFilesPanel.this.remove(1);
+                        RecentFilesPanel.this.add(new RecentFilesButtonsPanel());
+                        JOptionPane.showMessageDialog(parentScrollPane,
+                                "The selected file could not be found.", "Error", JOptionPane.ERROR_MESSAGE);
+                        //TODO: remove question details from app.properties
+                    } catch (Exception exc) {
+
+                    }
                 }
             });
         }
