@@ -20,7 +20,7 @@ public class QuestionAttributeComparator implements Comparator<Question> {
     private final QuestionAttribute ATT_TO_COMPARE;
 
     /**
-     * Whether the {@link #compare(Question, Question)} function should compare in reverse (ie
+     * Whether the {@link #compare(Question, Question)} function should compare in reverse (i.e.
      * compare {@code qTwo} to {@code qOne}) or not.
      */
     private final boolean IS_REVERSE;
@@ -33,7 +33,7 @@ public class QuestionAttributeComparator implements Comparator<Question> {
      *         by.
      * @param reverse
      *         whether the {@link #compare(Question, Question)} function should compare in reverse
-     *         (ie compare {@code qTwo} to {@code qOne}) or not.
+     *         (i.e. compare {@code qTwo} to {@code qOne}) or not.
      */
     public QuestionAttributeComparator(QuestionAttribute attribute, boolean reverse) {
         ATT_TO_COMPARE = attribute;

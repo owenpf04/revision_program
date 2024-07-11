@@ -8,12 +8,16 @@ import javax.swing.*;
 import java.awt.*;
 
 public class MainTabbedPane extends JTabbedPane {
-    public MainTabbedPane(Color bgColour) {
+    private final JFrame mainFrame;
+    public MainTabbedPane(JFrame mainFrame, Color bgColour) {
+        this.mainFrame = mainFrame;
+
         setBackground(bgColour);
         putClientProperty("JTabbedPane.tabIconPlacement", SwingConstants.TOP);
         setTabPlacement(JTabbedPane.LEFT);
         setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-        addTab("Home", FontIcon.of(CarbonIcons.HOME, 40), new HomeScrollPane());
+
+        addTab("Home", FontIcon.of(CarbonIcons.HOME, 40), new HomeScrollPane(mainFrame));
         addTab("Settings", FontIcon.of(CarbonIcons.SETTINGS, 40), new JPanel());
         addTab("About", FontIcon.of(CarbonIcons.INFORMATION, 40), new JPanel());
     }

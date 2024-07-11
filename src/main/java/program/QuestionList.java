@@ -162,4 +162,16 @@ public class QuestionList {
 
         return returnSet;
     }
+
+    public Number getMinValue(QuestionNumericalAttribute attribute) {
+        Question min = Collections.min(questions,
+                new QuestionNumericalAttributeComparator(attribute, false));
+        return min.getQuestionNumericalAttribute(attribute);
+    }
+
+    public Number getMaxValue(QuestionNumericalAttribute attribute) {
+        Question max = Collections.max(questions,
+                new QuestionNumericalAttributeComparator(attribute, false));
+        return max.getQuestionNumericalAttribute(attribute);
+    }
 }

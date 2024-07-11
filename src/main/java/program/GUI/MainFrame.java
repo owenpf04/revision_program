@@ -20,7 +20,7 @@ public class MainFrame extends JFrame {
 
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBackground(Misc.getUIManagerColor("colorMenuBackground"));
-        mainPanel.add(new MainTabbedPane(Misc.getUIManagerColor("colorMenuBackground")), BorderLayout.CENTER);
+        mainPanel.add(new MainTabbedPane(this, Misc.getUIManagerColor("colorMenuBackground")), BorderLayout.CENTER);
 
         add(mainPanel);
         setVisible(true);

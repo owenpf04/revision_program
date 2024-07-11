@@ -12,12 +12,25 @@ import program.helpers.ReformatString;
  * Copyright (c) Owen Parfitt-Ford 2024. All rights reserved.
  */
 public enum QuestionNumericalAttribute {
-    INDEX,
-    ATTEMPTED,
-    CORRECT,
-    PERCENTAGE,
-    EXPECTED_TIMES_ASKED,
-    LIKELIHOOD;
+    INDEX("The position of the question in the file."),
+    ATTEMPTED("The number of times the question has been attempted."),
+    CORRECT("The number of times the question has been answered correctly."),
+    PERCENTAGE("The percentage of the question's attempts which were answered correctly."),
+    EXPECTED_TIMES_ASKED("The number of times the question should have been asked - based " +
+            "on the number of questions answered where the given question was amongst those which " +
+            "could have been chosen."),
+    LIKELIHOOD("The arbitrary likelihood value for the question - a number between 0 and " +
+            "100 indicating how likely it is to be asked, or how important it is to focus on that " +
+            "question, higher indicating more likely/important.");
+    private final String description;
+
+    QuestionNumericalAttribute(String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 
     /**
      * Returns true if the provided string matches a {@code QuestionNumericalAttribute} name, when

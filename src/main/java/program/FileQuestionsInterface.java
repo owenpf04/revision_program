@@ -243,7 +243,7 @@ public class FileQuestionsInterface {
 
     /**
      * Returns the index of the first comma in the provided {@code line} which is not enclosed by
-     * surrounding quotes (ie a comma which is being used to separate fields, not one which is a
+     * surrounding quotes (i.e. a comma which is being used to separate fields, not one which is a
      * character in a field).
      *
      * <p>This is determined by the number of double quote characters (") between

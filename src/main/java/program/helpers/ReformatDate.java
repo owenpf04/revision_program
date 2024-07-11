@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 
 public class ReformatDate {
     public static String describeInWords(LocalDateTime dateTime) {
@@ -54,12 +55,17 @@ public class ReformatDate {
         }
 
         long minsBetween = ChronoUnit.MINUTES.between(dateTime, currentDateTime);
-        if (minsBetween == 1) {
-            return "A minute ago";
-        } else if (minsBetween > 1) {
-            return (minsBetween + " minutes ago");
-        } else if (minsBetween == 0){
+        if (minsBetween == 0) {
             return "Just now";
+        }
+
+        long truncatedMinsBetween = ChronoUnit.MINUTES.between(
+                dateTime.truncatedTo(ChronoUnit.MINUTES),
+                currentDateTime.truncatedTo(ChronoUnit.MINUTES));
+        if (truncatedMinsBetween == 1) {
+            return "A minute ago";
+        } else if (truncatedMinsBetween > 1) {
+            return (truncatedMinsBetween + " minutes ago");
         }
 
         return "In the future...?";

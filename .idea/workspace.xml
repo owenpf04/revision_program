@@ -25,6 +25,20 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;owenpf04&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="selectedUrlAndAccountId">
+      <UrlAndAccount>
+        <option name="accountId" value="0125f1b0-9581-4314-948c-cd43ac5673b6" />
+        <option name="url" value="https://github.com/owenpf04/revision_program.git" />
+      </UrlAndAccount>
+    </option>
+  </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 2
@@ -38,7 +52,7 @@
   "keyToString": {
     "Gradle.revision_program [:Main.main()].executor": "Run",
     "Gradle.revision_program [shadowJar].executor": "Run",
-    "JAR Application.MainJAR.executor": "Run",
+    "JAR Application.MainJAR.executor": "Debug",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "GUI-only",
@@ -49,6 +63,13 @@
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.0",
     "settings.editor.selected.configurable": "configurable.group.editor"
+  },
+  "keyToStringList": {
+    "GitStage.ChangesTree.GroupingKeys": [
+      "directory",
+      "module",
+      "repository"
+    ]
   }
 }]]></component>
   <component name="RecentsManager">
@@ -57,7 +78,15 @@
       <recent name="C:\Users\owenp\Documents\revision_program\src\main\java\program\exceptions" />
     </key>
   </component>
-  <component name="RunManager" selected="JAR Application.MainJAR">
+  <component name="RunManager" selected="Application.Main">
+    <configuration name="Main (OpenGL)" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="program.Main" />
+      <module name="revision_program.main" />
+      <option name="VM_PARAMETERS" value="-Dsun.java2d.opengl=true" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Main" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="program.Main" />
       <module name="revision_program.main" />
@@ -74,6 +103,7 @@
       </method>
     </configuration>
     <list>
+      <item itemvalue="Application.Main (OpenGL)" />
       <item itemvalue="Application.Main" />
       <item itemvalue="JAR Application.MainJAR" />
     </list>
@@ -94,14 +124,27 @@
       <option name="presentableId" value="Default" />
       <updated>1720109343848</updated>
     </task>
+    <task id="LOCAL-00001" summary="Lots and lots and lots of work (which I hope has cleaned things up a bit, although a LOT more cleaning up still has to be done), mostly on dialogs and settings.">
+      <option name="closed" value="true" />
+      <created>1720306117960</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1720306117960</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Lots and lots and lots of work (which I hope has cleaned things up a bit, although a LOT more cleaning up still has to be done), mostly on dialogs and settings." />
+    <option name="LAST_COMMIT_MESSAGE" value="Lots and lots and lots of work (which I hope has cleaned things up a bit, although a LOT more cleaning up still has to be done), mostly on dialogs and settings." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/program/GUI/dialogs/MessageDialog.java</url>
-          <line>62</line>
+          <line>66</line>
           <option name="timeStamp" value="5" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -110,16 +153,40 @@
           <option name="timeStamp" value="6" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/program/Main.java</url>
-          <line>168</line>
-          <option name="timeStamp" value="8" />
+          <url>file://$PROJECT_DIR$/src/main/java/program/GUI/questionFiltering/QuantitativeFilter.java</url>
+          <line>118</line>
+          <option name="timeStamp" value="32" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/program/Settings.java</url>
-          <line>128</line>
-          <option name="timeStamp" value="10" />
+          <url>file://$PROJECT_DIR$/src/main/java/program/attributes/fields/QuestionAttribute.java</url>
+          <line>41</line>
+          <option name="timeStamp" value="33" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/program/GUI/questionFiltering/QualitativeFilter.java</url>
+          <line>57</line>
+          <properties class="program.GUI.questionFiltering.QualitativeFilter.HeadingButtonListener" method="actionPerformed">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="28" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/program/GUI/questionFiltering/QuantitativeFilter.java</url>
+          <line>143</line>
+          <properties class="program.GUI.questionFiltering.QuantitativeFilter" method="validSelection">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="29" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+    <watches-manager>
+      <configuration name="GradleRunConfiguration">
+        <watch expression="selectedMin" language="JAVA" />
+        <watch expression="selectedMax" language="JAVA" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>

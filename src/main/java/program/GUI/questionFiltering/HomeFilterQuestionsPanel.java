@@ -14,24 +14,26 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class HomeFilterQuestionsPanel extends JPanel {
-    private QuestionList questionsFromFile;
+    private final JFrame mainFrame;
     private HomeScrollPane parentScrollPane;
+    private QuestionList questionsFromFile;
 
-    public HomeFilterQuestionsPanel(QuestionList questionsFromFile, HomeScrollPane parentScrollPane) {
-        this.questionsFromFile = questionsFromFile;
+    public HomeFilterQuestionsPanel(JFrame mainFrame, HomeScrollPane parentScrollPane, QuestionList questionsFromFile) {
+        this.mainFrame = mainFrame;
         this.parentScrollPane = parentScrollPane;
+        this.questionsFromFile = questionsFromFile;
+
 
         setLayout(new BorderLayout());
-        setBorder(new EmptyBorder(20,20,20,20));
 
         add(new TitlePanel("View and filter questions",
                 "Use the filters to select a number of questions to revise"),
                 BorderLayout.NORTH);
 
-        QuestionsTableScrollPane tablePanel = new QuestionsTableScrollPane(
-                new QuestionList(questionsFromFile.getQuestions()));
-        add(tablePanel, BorderLayout.CENTER);
 
+        QuestionsTableScrollPane table = new QuestionsTableScrollPane(
+                new QuestionList(questionsFromFile.getQuestions()));
+        add(table, BorderLayout.CENTER);
 
         JPanel navButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton backButton = new JButton("Back to file selection",
@@ -61,7 +63,7 @@ public class HomeFilterQuestionsPanel extends JPanel {
         navButtonPanel.add(continueButton);
         navButtonPanel.setBorder(new EmptyBorder(10,0,0,0));
 
-        add(new FilterScrollPane(questionsFromFile, tablePanel), BorderLayout.WEST);
+        add(new FilterPanel(questionsFromFile, table), BorderLayout.WEST);
         add(navButtonPanel, BorderLayout.SOUTH);
     }
 }

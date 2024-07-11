@@ -11,17 +11,32 @@ import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class QuestionsTableScrollPane extends JScrollPane {
     private QuestionList questions;
     private JTable table;
     private DefaultTableModel tableModel;
+    private TableRowSorter<TableModel> sorter;
+    private List<RowFilter<TableModel, Integer>> columnFilters;
+    private RowFilter<TableModel, Integer> searchFilter;
 
     public QuestionsTableScrollPane(QuestionList questions) {
         // see HomeScrollPane for an explanation
         getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
         getVerticalScrollBar().setUnitIncrement(16);
         getHorizontalScrollBar().setUnitIncrement(16);
+
+        columnFilters = new ArrayList<>();
+        for (int i = 0; i < (QuestionAttribute.values().length +
+                QuestionNumericalAttribute.values().length + 1); i++) {
+            columnFilters.add(new RowFilter<TableModel, Integer>() {
+                @Override
+                public boolean include(Entry<? extends TableModel, ? extends Integer> entry) {
+                    return true;
+                }
+            });
+        }
 
         String[] headers = getTableHeaders();
         Object[][] data = questionListTo2DArray(questions);
@@ -60,15 +75,17 @@ public class QuestionsTableScrollPane extends JScrollPane {
         table.setColumnSelectionAllowed(false);
         table.setRowSelectionAllowed(false);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        table.setRowSorter(new TableRowSorter<>(tableModel));
         table.putClientProperty("FlatLaf.styleClass", "large");
 
-        table.getTableHeader().setPreferredSize(new Dimension(1500,40));
+        sorter = new TableRowSorter<>(tableModel);
+        table.setRowSorter(sorter);
+
+//        table.getTableHeader().setPreferredSize(new Dimension(1500,40));
         table.getTableHeader().putClientProperty("FlatLaf.styleClass", "h1.regular");
         table.getTableHeader().setFont(new Font("Bahnschrift", Font.PLAIN, 20));
 
         table.setShowHorizontalLines(true);
-        table.setRowHeight(30);
+        table.setRowHeight((int) (1.5 * table.getRowHeight()));
 
         setColumnWidths();
 //        updateFirstColumnCheckboxes();
@@ -198,5 +215,18 @@ public class QuestionsTableScrollPane extends JScrollPane {
         DefaultCellEditor editor = (DefaultCellEditor)table.getDefaultEditor(Boolean.class);
         JCheckBox checkBoxEditor = (JCheckBox)editor.getComponent();
         Misc.updateCheckboxIcons(checkBoxEditor, 21);
+    }
+
+    public void setColumnFilter(RowFilter<TableModel, Integer> columnFilter, int column) {
+        columnFilters.set(column, columnFilter);
+        sorter.setRowFilter(RowFilter.andFilter(columnFilters));
+    }
+
+    public void setSearchFilter(RowFilter<TableModel, Integer> searchFilter) {
+        this.searchFilter = searchFilter;
+
+        List<RowFilter<TableModel, Integer>> allfilters = new ArrayList<>(columnFilters);
+        allfilters.add(searchFilter);
+        sorter.setRowFilter(RowFilter.andFilter(allfilters));
     }
 }

@@ -255,7 +255,7 @@
 //
 //    /**
 //     * Asks the user via the CLI if they would like to sort a selection of {@link Question}s in
-//     * ascending or descending order, and returns {@code true} if their answer is "D" (ie
+//     * ascending or descending order, and returns {@code true} if their answer is "D" (i.e.
 //     * {@code reverse = true}), or {@code false} if their answer is "A" ({@code reverse = false}).
 //     * Responses are non-case-sensitive, and have excess whitespace removed - see
 //     * {@link #getResponse(String, String[], boolean, boolean, boolean)}).

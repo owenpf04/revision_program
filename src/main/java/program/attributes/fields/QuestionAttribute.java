@@ -15,17 +15,21 @@ import program.helpers.ReformatString;
  * Copyright (c) Owen Parfitt-Ford 2024. All rights reserved.
  */
 public enum QuestionAttribute {
-    TITLE(null),
-    TOPIC(null),
-    PAPER_OR_UNIT(PaperOrUnit.getStringValues()),
-    SUBJECT(Subject.getStringValues()),
-    QUALIFICATION_LEVEL(QualificationLevel.getStringValues()),
-    EXAM_BOARD(ExamBoard.getStringValues());
+    TITLE(null, "The title of the question."),
+    TOPIC(null, "The topic/section to which the question belongs."),
+    PAPER_OR_UNIT(PaperOrUnit.getStringValues(), "The paper, or unit, whose " +
+            "content contains the question."),
+    SUBJECT(Subject.getStringValues(), "The subject to which the question belongs."),
+    QUALIFICATION_LEVEL(QualificationLevel.getStringValues(), "The qualification " +
+            "level to which the question belongs."),
+    EXAM_BOARD(ExamBoard.getStringValues(), "The exam board to which the question " +
+            "belongs.");
 
     /**
      * An array of valid values for a given {@code QuestionAttribute} constant.
      */
     private final String[] VALID_VALUES;
+    private final String description;
 
     /**
      * Creates a new {@code QuestionAttribute} with the provided array as its array of valid
@@ -34,8 +38,13 @@ public enum QuestionAttribute {
      * @param validValues
      *         an array of valid values for the attribute.
      */
-    QuestionAttribute(String[] validValues) {
+    QuestionAttribute(String[] validValues, String description) {
         this.VALID_VALUES = validValues;
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     /**

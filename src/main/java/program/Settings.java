@@ -7,6 +7,8 @@ import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.*;
+import java.security.CodeSource;
+import java.security.ProtectionDomain;
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -76,27 +78,78 @@ public abstract class Settings {
         return Double.parseDouble(customProperties.getProperty("timesAskedAbsoluteOffset"));
     }
 
-
-    public static void initialiseProperties() throws IOException, NullPointerException,
-            URISyntaxException {
+    /**
+     * Initialises the {@link Settings} class' {@link #customProperties} and
+     * {@link #defaultProperties} objects (i.e. loads the properties in for use in the rest of the
+     * program). This method MUST be called before any other methods can be used, as all other
+     * methods rely on the properties being loaded.
+     * <p>
+     * Note that this method does not validate these properties, it only loads them, meaning the
+     * {@link #validateAllProperties()} method should be called afterwards to ensure properties are
+     * valid.
+     * @throws IOException if an error occurs while reading from either of the input streams for the
+     * custom or default properties files.
+     * @throws IllegalArgumentException if either of the default or custom properties files contain
+     * a malformed Unicode escape sequence.
+     * @throws NullPointerException if either of the default or custom properties files could not be
+     * found or opened for some reason (meaning no input stream to read from), or technically if
+     * either {@link #DEFAULT_SETTINGS_NAME} or {@link #CUSTOM_SETTINGS_NAME} are {@code null}.
+     * @throws URISyntaxException if the URL returned by Settings.class. ... .getLocation() is not
+     * formatted strictly according to RFC2396 and could not be converted to a URI (this should never
+     * occur).
+     */
+    public static void initialiseProperties() throws IOException, IllegalArgumentException,
+            NullPointerException, URISyntaxException {
         loadDefaultProperties();
         loadCustomProperties();
     }
 
+    /**
+     * Calls {@link #validateProperties(Properties)} on both {@link #defaultProperties} (not that
+     * this should be necessary as the defaults should be valid) and {@link #customProperties}.
+     * @throws InvalidPropertiesException if either {@link Properties} object is in any way invalid
+     * (if there are required key-value pairs missing, or if the values for any required keys are
+     * invalid). The exception will contain the details of all of the issues found, not just the
+     * first one.
+     */
     public static void validateAllProperties() throws InvalidPropertiesException {
         validateProperties(defaultProperties);
         validateProperties(customProperties);
     }
 
     /**
-     * @throws Exception
-     *         lots of things could go wrong
+     * Resets all properties to their defaults, and saves these properties. See
+     * {@link #saveSettings()}.
+     * @throws InvalidPropertiesException if the default properties {@link #defaultProperties} are
+     * invalid (this should never occur).
+     * @throws URISyntaxException if the URL returned by Settings.class. ... .getLocation() is not
+     * formatted strictly according to RFC2396 and could not be converted to a URI (this should never
+     * occur).
+     * @throws IOException if the custom properties file cannot be created (or opened if it already
+     * exists), or if an error occurs while writing the properties to the file to the output stream.
      */
-    public static void resetAllFieldsToDefaults() throws URISyntaxException, IOException {
+    public static void resetAllFieldsToDefaults() throws InvalidPropertiesException, URISyntaxException,
+            IOException {
         customProperties = defaultProperties;
+        validateProperties(customProperties);
         saveSettings();
     }
 
+    /**
+     * Updates {@link #customProperties}' values for each of the keys in {@code keys} with the
+     * corresponding values from {@link #defaultProperties}, and saves the result (see
+     * {@link #saveSettings()}).
+     * @param keys a collection of keys, each of whose values should be reset to its default value.
+     * @throws IllegalArgumentException if any of the provided keys is not present in
+     * {@code customProperties}.
+     * @throws InvalidPropertiesException if the resulting set of properties is invalid (this should
+     * never occur).
+     * @throws URISyntaxException if the URL returned by Settings.class. ... .getLocation() is not
+     * formatted strictly according to RFC2396 and could not be converted to a URI (this should never
+     * occur).
+     * @throws IOException if the custom properties file cannot be created (or opened if it already
+     * exists), or if an error occurs while writing the properties to the file to the output stream.
+     */
     public static void resetFieldsToDefaults(Collection<String> keys) throws IllegalArgumentException,
             InvalidPropertiesException, URISyntaxException, IOException {
         for (String key : keys) {
@@ -117,20 +170,51 @@ public abstract class Settings {
         saveSettings();
     }
 
-    public static void updateField(String key, String newValue) throws InvalidPropertiesException,
-            URISyntaxException, IOException{
+    /**
+     * Updates {@link #customProperties}'s value for {@code key} to {@code value}, and saves the
+     * result (see {@link #saveSettings()}).
+     * @param key the key whose value should be updated.
+     * @param newValue the value that {@code key} should be updated to.
+     * @throws IllegalArgumentException if the provided key does not exist in {@code customProperties}.
+     * @throws InvalidPropertiesException if the resulting set of properties is invalid.
+     * @throws URISyntaxException if the URL returned by Settings.class. ... .getLocation() is not
+     * formatted strictly according to RFC2396 and could not be converted to a URI (this should never
+     * occur).
+     * @throws IOException if the custom properties file cannot be created (or opened if it already
+     * exists), or if an error occurs while writing the properties to the file to the output stream.
+     */
+    public static void updateField(String key, String newValue) throws IllegalArgumentException,
+            InvalidPropertiesException, URISyntaxException, IOException{
         updateSingleField(key, newValue);
         validateProperties(customProperties);
         saveSettings();
     }
 
+    /**
+     * Updates the values of {@code recentFilePath1}, {@code 2} & {@code 3}, and {@code recentFileDate1},
+     * {@code 2} & {@code 3} to include a new entry with {@code fileLocation} as the file path, and
+     * the current LocalDateTime ({@link LocalDateTime#now()}) as the file date, and then saves the
+     * result (see {@link #saveSettings()}). If all 3 recent file slots are already taken, the one
+     * with the oldest date (i.e. the one opened least recently) will be replaced with the new entry.
+     * <p>
+     * Although the recent files need not be sorted before running this method, they will be sorted
+     * afterwards - so recent file 1 will be the most recent (i.e. the one added by this method)
+     * etc. See {@link #setRecentFiles(Collection)} for more details on updating recent files.
+     * @param fileLocation the file path to associate with the new entry.
+     * @throws InvalidPropertiesException if the resulting set of properties is invalid.
+     * @throws URISyntaxException if the URL returned by Settings.class. ... .getLocation() is not
+     * formatted strictly according to RFC2396 and could not be converted to a URI (this should never
+     * occur).
+     * @throws IOException if the custom properties file cannot be created (or opened if it already
+     * exists), or if an error occurs while writing the properties to the file to the output stream.
+     */
     public static void addRecentFile(String fileLocation) throws InvalidPropertiesException,
             URISyntaxException, IOException {
         List<QuestionFile> recentFiles = getRecentFiles();
 
         boolean alreadyRecent = false;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss");
-        String currentDateTime = LocalDateTime.now().format(formatter);
+        String currentDateTime = LocalDateTime.now().format(
+                DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss"));
 
         for (int i = 0; i < recentFiles.size(); i++) {
             QuestionFile file = recentFiles.get(i);
@@ -149,23 +233,56 @@ public abstract class Settings {
             }
         }
 
-        recentFiles.sort(null);
-        for (int i = 0; i < 3; i++) {
-            try {
-                QuestionFile file = recentFiles.get(i);
-                updateSingleField(("recentFilePath" + (i + 1)), file.getFilePath());
-                updateSingleField(("recentFileDate" + (i + 1)),
-                        file.getLastOpened().format(formatter));
-            } catch (IndexOutOfBoundsException e) {
-                updateSingleField(("recentFilePath" + (i + 1)), "null");
-                updateSingleField(("recentFileDate" + (i + 1)), "null");
+        setRecentFiles(recentFiles);
+    }
+
+    /**
+     * Removes the recent file entry with {@code fileLocation} as its file path, updates the
+     * relevant properties in {@link #customProperties} and saves the result.
+     * <p>
+     * Although the recent files need not be sorted before running this method, they will be sorted
+     * afterwards - so recent file 1 will be the most recent etc. See
+     * {@link #setRecentFiles(Collection)} for more details on updating recent files.
+     * @param fileLocation the file path of the recent file to remove.
+     * @throws InvalidPropertiesException if the resulting set of properties is invalid.
+     * @throws URISyntaxException if the URL returned by Settings.class. ... .getLocation() is not
+     * formatted strictly according to RFC2396 and could not be converted to a URI (this should never
+     * occur).
+     * @throws IOException if the custom properties file cannot be created (or opened if it already
+     * exists), or if an error occurs while writing the properties to the file to the output stream.
+     */
+    public static void removeRecentFile(String fileLocation) throws InvalidPropertiesException,
+            URISyntaxException, IOException {
+        List<QuestionFile> recentFiles = getRecentFiles();
+        List<QuestionFile> toRemove = new ArrayList<>();
+
+        for (int i = 0; i < recentFiles.size(); i++) {
+            QuestionFile file = recentFiles.get(i);
+
+            if (file.getFilePath().equals(fileLocation)) {
+                toRemove.add(file);
+                //TODO what happens if same filepath appears twice
             }
         }
 
-        validateProperties(customProperties);
-        saveSettings();
+        recentFiles.removeAll(toRemove);
+
+        setRecentFiles(recentFiles);
     }
 
+    /**
+     * Writes the current set of key-value pairs stored in {@link #customProperties} to a new custom
+     * properties file with a name provided by {@link #CUSTOM_SETTINGS_NAME}, and in the same
+     * directory as this class (in the directory supplied by {@code
+     * Settings.class.getProtectionDomain().getCodeSource().getLocation()}). This is done via the
+     * {@link Properties#store(OutputStream, String)} method. If such a file already exists, its
+     * contents will be overwritten.
+     * @throws URISyntaxException if the URL returned by Settings.class. ... .getLocation() is not
+     * formatted strictly according to RFC2396 and could not be converted to a URI (this should never
+     * occur).
+     * @throws IOException if the custom properties file cannot be created (or opened if it already
+     * exists), or if an error occurs while writing the properties to the file to the output stream.
+     */
     public static void saveSettings() throws URISyntaxException, IOException {
         String settingsDirectory = Settings.class.getProtectionDomain().getCodeSource()
                 .getLocation().toURI().getPath();
@@ -178,8 +295,19 @@ public abstract class Settings {
                 "Last updated by program:");
     }
 
-
-    private static void loadDefaultProperties() throws IOException, NullPointerException {
+    /**
+     * Loads the default properties from the default properties file in resources (whose name should
+     * be {@link #DEFAULT_SETTINGS_NAME}). Note this does not validate these properties (not that
+     * they should need validation since they are the defaults), it simply assigns
+     * {@link #defaultProperties} the {@link Properties} object created.
+     * @throws IOException if an error occurs while reading from the input stream.
+     * @throws IllegalArgumentException if the input stream contains a malformed Unicode escape
+     * sequence.
+     * @throws NullPointerException if the input stream is null (i.e. if the default properties file
+     * could not be found), or technically if {@code DEFAULT_SETTINGS_NAME == null} .
+     */
+    private static void loadDefaultProperties() throws IOException, IllegalArgumentException,
+            NullPointerException {
         InputStream stream = Settings.class.getClassLoader().
                 getResourceAsStream(DEFAULT_SETTINGS_NAME);
 
@@ -188,8 +316,26 @@ public abstract class Settings {
         stream.close();
     }
 
-    private static void loadCustomProperties() throws IOException, NullPointerException,
-            URISyntaxException {
+    /**
+     * Loads the custom properties from the custom properties file, whose name should be
+     * {@link #CUSTOM_SETTINGS_NAME}, and which should be located in the same directory as this
+     * class (in the directory supplied by {@code
+     * Settings.class.getProtectionDomain().getCodeSource().getLocation()}). Note this does not
+     * validate these properties, it simply assigns {@link #customProperties} the {@link Properties}
+     * object created, and therefore they should be later validated using
+     * {@link #validateAllProperties()}.
+     * @throws IOException if an error occurs while reading from the input stream.
+     * @throws IllegalArgumentException if the input stream contains a malformed Unicode escape
+     * sequence.
+     * @throws NullPointerException if the input stream is null (meaning the custom properties file
+     * could not be found or opened for some reason), or technically if {@code CUSTOM_SETTINGS_name
+     * == null}.
+     * @throws URISyntaxException if the URL returned by {@code Settings.class.} ...
+     * {@code .getLocation()} is not formatted strictly according to RFC2396 and could not be
+     * converted to a URI (this should never occur).
+     */
+    private static void loadCustomProperties() throws IOException, IllegalArgumentException,
+            NullPointerException, URISyntaxException {
         String settingsDirectory = Settings.class.getProtectionDomain().getCodeSource()
                 .getLocation().toURI().getPath();
 
@@ -210,35 +356,14 @@ public abstract class Settings {
         stream.close();
     }
 
-//    /**
-//     * Creates a new Settings object from the key-value pairs specified in a .properties file. If
-//     * useDefaults is false, the method will search for a file "app.properties" in the same directory
-//     * as the class. If useDefaults is true, the method will search for a file "app_default.properties"
-//     * in the resources folder (which it should always find).
-//     * @param useDefaults
-//     * @throws IOException if an error occurred while reading from the file
-//     * @throws IllegalArgumentException if the file is in any way invalid
-//     * @throws NullPointerException if the file does not exist or could not be opened
-//     * @throws URISyntaxException this should never occur, thrown if
-//     * Settings.class.getProtectionDomain().getCodeSource().getLocation() cannot be converted to a
-//     * URI using .toURI()
-//     */
-//    public Settings(boolean useDefaults) throws IOException, InvalidPropertiesException,
-//            NullPointerException, URISyntaxException {
-//        if (!useDefaults) {
-//            properties = loadCustomProperties();
-//        } else {
-//            properties = loadDefaultProperties();
-//        }
-//
-//        validateProperties(properties);
-//    }
-//
-//    public Settings(Properties properties) throws InvalidPropertiesException {
-//        Settings.validateProperties(properties);
-//        this.properties = properties;
-//    }
-
+    /**
+     * Checks that the provided {@link Properties} object has values for all of the required keys,
+     * and that these values are all valid. Any key-value pairs which aren't required will be ignored.
+     * @param properties the {@code Properties} object to check for validity.
+     * @throws InvalidPropertiesException if {@code properties} is in any way invalid (if there are
+     * required key-value pairs missing, or if the values for any required keys are invalid). The
+     * exception will contain the details of all of the issues found, not just the first one.
+     */
     private static void validateProperties(Properties properties) throws InvalidPropertiesException {
         Set<InvalidProperty> invalidPropertySet = new LinkedHashSet<>();
 
@@ -316,6 +441,15 @@ public abstract class Settings {
         }
     }
 
+    /**
+     * Returns {@code value} interpreted as a username, which simply means that if {@code value ==
+     * "user.name"}, {@link System#getProperty(String) System.getProperty(value)} will be returned
+     * instead.
+     * @param value the {@link String} to parse as a username.
+     * @return {@code System.getProperty(value)} if {@code value == "user.name"}, {@code value}
+     * otherwise.
+     * @throws IllegalArgumentException if {@code value == null}.
+     */
     private static String parseUsername(String value) throws IllegalArgumentException {
         verifyNonNull("userName", value);
 
@@ -326,6 +460,17 @@ public abstract class Settings {
         }
     }
 
+    /**
+     * Verifies that {@code value} is a valid <i>theoretical</i> file/directory location (theoretical
+     * meaning this method does not check that a file/directory <i>actually exists</i> at the location
+     * specified by {@code value}, it just checks if {@code value} is a valid location at which a
+     * file/directory could exist).
+     * @param key the name of the key to which the provided value relates (used for
+     * {@link #verifyNonNull(String, String)}).
+     * @param value the value, relating to the provided key, which is to be verified.
+     * @throws IllegalArgumentException if {@code value == null}, or if {@code value} is not a valid
+     * file/directory location (checked using {@link Paths#get(String, String...)}).
+     */
     private static void verifyFileLocation(String key, String value) throws IllegalArgumentException {
         verifyNonNull(key, value);
 
@@ -339,6 +484,17 @@ public abstract class Settings {
         }
     }
 
+    /**
+     * Verifies that {@code value} is a valid {@link LocalDateTime} (i.e. that it can be interpreted
+     * as per the ISO-8601 standard). The method does not check if {@code value} is a
+     * <i>sensible</i> {@code LocalDateTime} (i.e. whether it is in the past or the future, how
+     * distant it is from the current time etc).
+     * @param key the name of the key to which the provided value relates (used for
+     * {@link #verifyNonNull(String, String)}).
+     * @param value the value, relating to the provided key, which is to be verified.
+     * @throws IllegalArgumentException if {@code value == null}, or if {@code value} is not a valid
+     * {@code LocalDateTime} (checked using {@link LocalDateTime#parse(CharSequence)}).
+     */
     private static void verifyDateTime(String key, String value) throws IllegalArgumentException {
         verifyNonNull(key, value);
 
@@ -353,6 +509,14 @@ public abstract class Settings {
         }
     }
 
+    /**
+     * Verifies that {@code value} is a valid {@link Double}.
+     * @param key the name of the key to which the provided value relates (used for
+     * {@link #verifyNonNull(String, String)}).
+     * @param value the value, relating to the provided key, which is to be verified.
+     * @throws IllegalArgumentException if {@code value == null}, or if {@code value} cannot be
+     * parsed as a double (see {@link Double#valueOf(String)}).
+     */
     private static void verifyDoubleProperty(String key, String value) throws IllegalArgumentException {
         verifyNonNull(key, value);
 
@@ -363,7 +527,17 @@ public abstract class Settings {
         }
     }
 
-    private static void verifyNonNull(String key, String value) {
+    /**
+     * Verifies that {@code value != null}. This method is to be used in the context of interpreting
+     * key-value pairs from a {@link Properties} object, and so the parameter {@code key} is
+     * required for the purpose of personalising the potentially thrown
+     * {@code IllegalArgumentException} with the message
+     * {@code "Value for key \"" + key + "\" not found."}.
+     * @param key the name of the key to which the provided value relates.
+     * @param value the value, relating to the provided key, which is to be verified.
+     * @throws IllegalArgumentException if {@code value == null};
+     */
+    private static void verifyNonNull(String key, String value) throws IllegalArgumentException {
         if (value == null) {
             throw new IllegalArgumentException("Value for key \"" + key + "\" not found.");
         }
@@ -377,12 +551,63 @@ public abstract class Settings {
         return value;
     }
 
-    private static Properties updateSingleField(String key, String newValue)
+    /**
+     * Sets {@code newValue} as the value for the key named {@code key} in {@link #customProperties}.
+     * If no key named {@code key} exists, an {@code IllegalArgumentException} is thrown. This method
+     * does not check if {@code newValue} is a valid value, so this should be done separately using
+     * {@link #validateProperties(Properties)}.
+     * @param key the name of the key whose value should be replaced.
+     * @param newValue the new value to set for the specified key.
+     * @throws IllegalArgumentException if no key named {@code key} currently exists in {@code
+     * customProperties}.
+     */
+    private static void updateSingleField(String key, String newValue)
             throws IllegalArgumentException {
         if (customProperties.replace(key, newValue) == null) {
             throw new IllegalArgumentException("\"" + key + "\" is not a valid field key");
         }
+    }
 
-        return customProperties;
+    /**
+     * Sets the mappings for {@code recentFilePath1}, {@code 2} & {@code 3} and {@code recentFileDate1},
+     * {@code 2} & {@code 3} to reflect the contents of {@code files}, and saves the result (see
+     * {@link #saveSettings()}). {@code recentFilePath1} and {@code -date1} will be updated to match
+     * the details of the {@link QuestionFile} in {@code files} with the most recent
+     * {@code lastOpened} date, and so on.
+     * <p>
+     * If {@code files} contains less than
+     * 3 {@code QuestionFile}s, the excess keys will be updated to {@code "null"} (e.g. if {@code files}
+     * only contained one {@code QuestionFile}, {@code recentFilePath2} & {@code -date2}, and {@code
+     * recentFilePath3} & {@code -date3} would all be set to {@code "null"}).
+     * @param files the collection of {@code QuestionFiles} to update the properties mappings to
+     * reflect.
+     * @throws InvalidPropertiesException if the resulting set of properties is invalid.
+     * @throws URISyntaxException if the URL returned by Settings.class. ... .getLocation() is not
+     * formatted strictly according to RFC2396 and could not be converted to a URI (this should never
+     * occur).
+     * @throws IOException if the custom properties file cannot be created (or opened if it already
+     * exists), or if an error occurs while writing the properties to the file to the output stream.
+     */
+    private static void setRecentFiles(Collection<QuestionFile> files) throws InvalidPropertiesException,
+            URISyntaxException, IOException {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss");
+        List<QuestionFile> recentFiles = new ArrayList<>(files);
+
+        recentFiles.sort(null);
+
+        for (int i = 0; i < 3; i++) {
+            try {
+                QuestionFile file = recentFiles.get(i);
+                updateSingleField(("recentFilePath" + (i + 1)), file.getFilePath());
+                updateSingleField(("recentFileDate" + (i + 1)),
+                        file.getLastOpened().format(formatter));
+            } catch (IndexOutOfBoundsException e) {
+                updateSingleField(("recentFilePath" + (i + 1)), "null");
+                updateSingleField(("recentFileDate" + (i + 1)), "null");
+            }
+        }
+
+        validateProperties(customProperties);
+        saveSettings();
     }
 }

@@ -5,6 +5,7 @@ import program.exceptions.InvalidQuestionFileException;
 import program.helpers.ReformatString;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.Arrays;
 
@@ -13,7 +14,7 @@ public abstract class MessageDialog {
             "Please send me an email at owenpf.work@gmail.com " +
                     "with these details. The program will now exit.";
 
-    private static void displayMessage(String windowTitle, String contentTitle, String desc,
+    private static void displayMessage(Component parent, String windowTitle, String contentTitle, String desc,
             JPanel details, String instructions, int messageType) {
         JPanel mainPanel = new JPanel(new BorderLayout(0,20));
 
@@ -23,7 +24,7 @@ public abstract class MessageDialog {
 
         JLabel description = new JLabel("<html>" + ReformatString.wrapString(desc,
                 100, 0, true) + "</html>");
-        description.putClientProperty("FlatLaf.styleClass", "medium");
+        description.putClientProperty("FlatLaf.styleClass", "large");
 
         contentPanel.add(description, BorderLayout.NORTH);
         if (details != null) {
@@ -37,19 +38,19 @@ public abstract class MessageDialog {
         mainPanel.add(titleLabel, BorderLayout.NORTH);
         mainPanel.add(contentPanel, BorderLayout.CENTER);
 
-        JOptionPane.showMessageDialog(null, mainPanel, windowTitle, messageType);
+        JOptionPane.showMessageDialog(parent, mainPanel, windowTitle, messageType);
     }
 
-    public static void displayUnexpectedErrorMessage(Exception e) {
-        displayMessage("Unexpected error", "An unexpected error has occurred.",
+    public static void displayUnexpectedErrorMessage(Component parent, Exception e) {
+        displayMessage(parent, "Unexpected error", "An unexpected error has occurred.",
                 "We don't really know what caused this error; the best we can do is provide " +
                         "you with the details below.", exceptionDetailsPanel(e), "As stated above, we " +
                         "don't know what caused this error, so we can't really offer any advice " +
                         "other than to try again.", JOptionPane.ERROR_MESSAGE);
     }
 
-    public static void displayExpectedErrorMessage(String context, Exception e) {
-        displayMessage("Error", "An error occurred while " + context + ".",
+    public static void displayExpectedErrorMessage(Component parent, String context, Exception e) {
+        displayMessage(parent, "Error", "An error occurred while " + context + ".",
                 "This is an error which we're aware could occur in theory, but didn't think " +
                         "would ever happen in practice.", exceptionDetailsPanel(e), "As stated above, we " +
                         "didn't think this error would ever actually happen (great assumption), so " +
@@ -57,13 +58,24 @@ public abstract class MessageDialog {
     }
 
     public static void displayInvalidFileMessage(Component parent, InvalidQuestionFileException e) {
-
+        displayMessage(parent, "Invalid file", "We can't read that.",
+                "The selected file is invalid - see below for the first issue (although there " +
+                        "may be others).", invalidQuestionFilePanel(e), null,
+                JOptionPane.ERROR_MESSAGE);
     }
 
-    public static void displayInfoMessage(String windowTitle, String contentTitle, String desc) {
-        displayMessage(windowTitle, contentTitle, desc, null, null,
+    public static void displayInfoMessage(Component parent, String windowTitle, String contentTitle, String desc) {
+        displayMessage(parent, windowTitle, contentTitle, desc, null, null,
                 JOptionPane.INFORMATION_MESSAGE);
     }
+
+    public static void displayInfoMessage(Component parent, String windowTitle, String contentTitle,
+            String desc, int messageType) {
+        displayMessage(parent, windowTitle, contentTitle, desc, null, null,
+                messageType);
+    }
+
+    //TODO add dialog for if file cannot be found
 
     static JPanel exceptionDetailsPanel(Exception e) {
         JLabel titleLabel = new JLabel("Details:");
@@ -79,7 +91,7 @@ public abstract class MessageDialog {
         // Workaround to avoid caret being insertable into text, without changing text colour
         details.setEnabled(false);
         details.setDisabledTextColor(details.getForeground());
-        details.setFont(new Font(FlatJetBrainsMonoFont.FAMILY, Font.PLAIN, 12));
+        details.putClientProperty("FlatLaf.styleClass", "monospaced");
 
         JPanel mainPanel = new JPanel(new BorderLayout(0, 8));
         mainPanel.add(titleLabel, BorderLayout.NORTH);
@@ -101,6 +113,30 @@ public abstract class MessageDialog {
 
         mainPanel.add(titleLabel, BorderLayout.NORTH);
         mainPanel.add(instructionArea, BorderLayout.CENTER);
+
+        return mainPanel;
+    }
+
+    static JPanel invalidQuestionFilePanel(InvalidQuestionFileException e) {
+        JLabel titleLabel = new JLabel("Details:");
+        titleLabel.putClientProperty("FlatLaf.styleClass", "h3");
+
+        String detailsMessage = "File location: " +
+                ReformatString.wrapString(e.getFileLocation(), 60, 15, false) +
+                "\nLine number:   " + e.getLineNumber() +
+                "\nLine:          \"" + ReformatString.wrapString(e.getLine(), 60, 15, false) +
+                "\"\nDescription:   " +
+                ReformatString.wrapString(e.getDescription(), 60, 15, false);
+
+        JTextArea details = new JTextArea(detailsMessage);
+        // Workaround to avoid caret being insertable into text, without changing text colour
+        details.setEnabled(false);
+        details.setDisabledTextColor(details.getForeground());
+        details.putClientProperty("FlatLaf.styleClass", "monospaced");
+
+        JPanel mainPanel = new JPanel(new BorderLayout(0, 8));
+        mainPanel.add(titleLabel, BorderLayout.NORTH);
+        mainPanel.add(details, BorderLayout.CENTER);
 
         return mainPanel;
     }

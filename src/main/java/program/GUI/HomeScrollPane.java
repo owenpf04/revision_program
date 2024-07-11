@@ -10,12 +10,15 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class HomeScrollPane extends JScrollPane {
+    private final JFrame mainFrame;
     private JPanel innerPanel;
 
-    public HomeScrollPane() {
-        setBackground(Misc.getUIManagerColor("colorMenuBackground"));
+    public HomeScrollPane(JFrame mainFrame) {
+        this.mainFrame = mainFrame;
+        setBorder(new EmptyBorder(0,0,0,0));
 
         innerPanel = new JPanel(new BorderLayout());
+        innerPanel.setBorder(new EmptyBorder( 15, 15, 15, 15));
         setViewportView(innerPanel);
         // fix for artifacting when scrolling backwards - BACKINGSTORE_SCROLL_MODE is stated to
         // provide better performance (which makes sense), but requires significantly more RAM
@@ -29,11 +32,11 @@ public class HomeScrollPane extends JScrollPane {
 
     public void showSelectFilePanel() {
         innerPanel.removeAll();
-        innerPanel.add(new HomeSelectFilePanel(this), BorderLayout.CENTER);
+        innerPanel.add(new HomeSelectFilePanel(mainFrame, this), BorderLayout.CENTER);
     }
 
     public void showFilterQuestionsPanel(QuestionList questionsFromFile) {
         innerPanel.removeAll();
-        innerPanel.add(new HomeFilterQuestionsPanel(questionsFromFile, this));
+        innerPanel.add(new HomeFilterQuestionsPanel(mainFrame, this, questionsFromFile));
     }
 }

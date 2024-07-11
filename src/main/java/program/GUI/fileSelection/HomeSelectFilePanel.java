@@ -5,11 +5,10 @@ import org.kordamp.ikonli.swing.FontIcon;
 import program.FileQuestionsInterface;
 import program.GUI.HomeScrollPane;
 import program.GUI.TitlePanel;
-import program.GUI.questionFiltering.HomeFilterQuestionsPanel;
+import program.GUI.dialogs.MessageDialog;
 import program.QuestionList;
 import program.Settings;
 import program.exceptions.InvalidQuestionFileException;
-import program.helpers.CommonDialogs;
 import program.helpers.ReformatDate;
 
 import javax.swing.*;
@@ -23,14 +22,15 @@ import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
 
 public class HomeSelectFilePanel extends JPanel {
+    private final JFrame mainFrame;
+    private HomeScrollPane parentScrollPane;
     private JPanel titlePanel;
     private JPanel filePanel;
-    private HomeScrollPane parentScrollPane;
 
-    public HomeSelectFilePanel(HomeScrollPane parentScrollPane) {
+    public HomeSelectFilePanel(JFrame mainFrame, HomeScrollPane parentScrollPane) {
+        this.mainFrame = mainFrame;
         this.parentScrollPane = parentScrollPane;
 
-        setBorder(new EmptyBorder(20,20,20,20));
         setLayout(new BorderLayout());
         titlePanel = new TitlePanel(getGreetingMessage(),
                 "Open a question file to get revising:");
@@ -59,7 +59,7 @@ public class HomeSelectFilePanel extends JPanel {
         public FilePanel() {
             setLayout(new BorderLayout());
 
-            recentFilesPanel = new RecentFilesPanel(parentScrollPane);
+            recentFilesPanel = new RecentFilesPanel(mainFrame, parentScrollPane);
             recentFilesPanel.setBorder(new EmptyBorder(0,0,20,0));
             openFilePanel = new OpenFilePanel();
 
@@ -82,7 +82,8 @@ public class HomeSelectFilePanel extends JPanel {
                 chooseFileButton = new JButton("Select a file", FontIcon.of(CarbonIcons.FOLDER, 50));
                 chooseFileButton.putClientProperty("FlatLaf.styleClass", "large");
                 chooseFileButton.setIconTextGap(15);
-                chooseFileButton.setPreferredSize(new Dimension(200,100));
+//                chooseFileButton.setPreferredSize(new Dimension(200,100));
+                chooseFileButton.setMargin(new Insets(15,15,15,15));
                 chooseFileButtonPanel.add(chooseFileButton);
                 chooseFileButtonPanel.setBorder(new EmptyBorder(30,0,10,0));
 
@@ -120,18 +121,12 @@ public class HomeSelectFilePanel extends JPanel {
                             Settings.addRecentFile(chosenFile.getAbsolutePath());
 
                             parentScrollPane.showFilterQuestionsPanel(questionsFromFile);
-//                            parentScrollPane.getInnerPanel().remove();
-//                            parentScrollPane.getInnerPanel().add(
-//                                    new HomeFilterQuestionsPanel(questionsFromFile, parentScrollPane),
-//                                    "homeFilterQuestionsPanel");
-//                            parentScrollPane.getCardPanelLayout().show(
-//                                    parentScrollPane.getInnerPanel(),
-//                                    "homeFilterQuestionsPanel");
                         } catch (InvalidQuestionFileException exc) {
-                            CommonDialogs.showInvalidFileDialog(parentScrollPane, exc);
+                            MessageDialog.displayInvalidFileMessage(parentScrollPane, exc);
                         } catch (FileNotFoundException exc) {
-                            JOptionPane.showMessageDialog(parentScrollPane,
-                                    "The selected file could not be found.", "Error", JOptionPane.ERROR_MESSAGE);
+                            MessageDialog.displayInfoMessage(mainFrame, "File not found",
+                                    "We can't find that.", "The selected file doesn't exist, " +
+                                            "or couldn't be opened.", JOptionPane.ERROR_MESSAGE);
                         } catch (Exception exc) {
 
                         }
