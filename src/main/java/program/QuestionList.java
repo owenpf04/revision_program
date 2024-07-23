@@ -17,11 +17,11 @@ import java.util.*;
 public class QuestionList {
     private ArrayList<Question> questions;
 
-    public QuestionList(ArrayList<Question> questions) {
-        this.questions = questions;
+    public QuestionList(List<Question> questions) {
+        this.questions = new ArrayList<>(questions);
     }
 
-    public ArrayList<Question> getQuestions() {
+    public List<Question> getQuestions() {
         return questions;
     }
 

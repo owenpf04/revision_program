@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -297,7 +298,7 @@ public class FileQuestionsInterface {
 
         fileWriter.write(COLUMN_HEADERS + "\n");
 
-        ArrayList<Question> questionsList = questions.getQuestions();
+        List<Question> questionsList = questions.getQuestions();
         for (int i = 0; i < questionsList.size() - 1; i++) {
             writeQuestionToFile(fileWriter, questionsList.get(i), false);
         }

@@ -4,8 +4,8 @@ import org.kordamp.ikonli.carbonicons.CarbonIcons;
 import org.kordamp.ikonli.swing.FontIcon;
 import program.FileQuestionsInterface;
 import program.GUI.HomeScrollPane;
-import program.GUI.TitlePanel;
-import program.GUI.dialogs.MessageDialog;
+import program.GUI.common.TitlePanel;
+import program.GUI.common.dialogs.MessageDialog;
 import program.QuestionList;
 import program.Settings;
 import program.exceptions.InvalidQuestionFileException;
@@ -120,7 +120,8 @@ public class HomeSelectFilePanel extends JPanel {
 
                             Settings.addRecentFile(chosenFile.getAbsolutePath());
 
-                            parentScrollPane.showFilterQuestionsPanel(questionsFromFile);
+                            parentScrollPane.setQuestionsFromFile(questionsFromFile);
+                            parentScrollPane.showFilterQuestionsPanel();
                         } catch (InvalidQuestionFileException exc) {
                             MessageDialog.displayInvalidFileMessage(parentScrollPane, exc);
                         } catch (FileNotFoundException exc) {

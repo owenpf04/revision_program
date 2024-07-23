@@ -1,4 +1,4 @@
-package program.GUI.dialogs;
+package program.GUI.common.dialogs;
 
 import program.exceptions.InvalidPropertiesException;
 import program.helpers.ReformatString;
@@ -74,7 +74,7 @@ public abstract class OptionDialog {
     private static JPanel optionInstructionsPanel(List<DialogOption> options) {
         JPanel panel = new JPanel(new BorderLayout(0,10));
 
-        String mainMessage = "<b>Click " + options.getFirst().getName() + "</b> to " +
+        String mainMessage = "<b>Click \"" + options.getFirst().getName() + "\"</b> to " +
                 options.getFirst().getDescription();
         JLabel mainOption = new JLabel("<html>" + ReformatString.wrapString(mainMessage,
                 100, 0, true) + "</html>");
@@ -82,8 +82,8 @@ public abstract class OptionDialog {
         panel.add(mainOption, BorderLayout.CENTER);
 
         if (options.size() == 2) {
-            String alternativeMessage = "Alternatively, click <b>" + options.getLast().getName() +
-                    "</b> to " + options.getLast().getDescription();
+            String alternativeMessage = "Alternatively, click <b>\"" + options.getLast().getName() +
+                    "\"</b> to " + options.getLast().getDescription();
             JLabel alternativeOption = new JLabel("<html>" + ReformatString.wrapString(
                     alternativeMessage, 100, 0, true) + "</html>");
             alternativeOption.putClientProperty("FlatLaf.styleClass", "medium");
@@ -98,7 +98,7 @@ public abstract class OptionDialog {
             String[] positions = {BorderLayout.CENTER, BorderLayout.SOUTH};
 
             for (int i = 0; i < 2; i++) {
-                String message = "Click <b>" + options.get(i + 1).getName() + "</b> to " +
+                String message = "Click <b>\"" + options.get(i + 1).getName() + "\"</b> to " +
                         options.get(i + 1).getDescription();
                 JLabel option = new JLabel("<html>" + ReformatString.wrapString(message,
                         100, 0, true) + "</html>");

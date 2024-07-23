@@ -1,9 +1,9 @@
 package program.GUI;
 
 import program.GUI.fileSelection.HomeSelectFilePanel;
+import program.GUI.modeSelection.HomeSelectModePanel;
 import program.GUI.questionFiltering.HomeFilterQuestionsPanel;
 import program.QuestionList;
-import program.helpers.Misc;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -12,6 +12,7 @@ import java.awt.*;
 public class HomeScrollPane extends JScrollPane {
     private final JFrame mainFrame;
     private JPanel innerPanel;
+    private QuestionList questionsFromFile;
 
     public HomeScrollPane(JFrame mainFrame) {
         this.mainFrame = mainFrame;
@@ -30,13 +31,22 @@ public class HomeScrollPane extends JScrollPane {
         showSelectFilePanel();
     }
 
+    public void setQuestionsFromFile(QuestionList questionsFromFile) {
+        this.questionsFromFile = questionsFromFile;
+    }
+
     public void showSelectFilePanel() {
         innerPanel.removeAll();
         innerPanel.add(new HomeSelectFilePanel(mainFrame, this), BorderLayout.CENTER);
     }
 
-    public void showFilterQuestionsPanel(QuestionList questionsFromFile) {
+    public void showFilterQuestionsPanel() {
         innerPanel.removeAll();
-        innerPanel.add(new HomeFilterQuestionsPanel(mainFrame, this, questionsFromFile));
+        innerPanel.add(new HomeFilterQuestionsPanel(this, questionsFromFile));
+    }
+
+    public void showSelectModePanel(QuestionList questions) {
+        innerPanel.removeAll();
+        innerPanel.add(new HomeSelectModePanel(mainFrame, this, questions));
     }
 }

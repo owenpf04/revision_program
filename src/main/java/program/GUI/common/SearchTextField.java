@@ -1,7 +1,8 @@
-package program.GUI.questionFiltering;
+package program.GUI.common;
 
 import org.kordamp.ikonli.carbonicons.CarbonIcons;
 import org.kordamp.ikonli.swing.FontIcon;
+import program.GUI.questionFiltering.QuestionsSelectionTableScrollPane;
 import program.attributes.fields.QuestionAttribute;
 import program.attributes.fields.QuestionNumericalAttribute;
 import program.helpers.ReformatString;
@@ -11,21 +12,20 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.TableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.List;
 
 public class SearchTextField extends JTextField {
-    private QuestionsTableScrollPane tablePane;
-    private ArrayList<JCheckBoxMenuItem> checkBoxMenuItems;
+    private QuestionsSelectionTableScrollPane tablePane;
+    private ArrayList<JCheckBox> checkBoxes;
 
-    public SearchTextField(QuestionsTableScrollPane tablePane) {
+    public SearchTextField(QuestionsSelectionTableScrollPane tablePane) {
         this.tablePane = tablePane;
-        checkBoxMenuItems = new ArrayList<>();
+        checkBoxes = new ArrayList<>();
 
-        putClientProperty("FlatLaf.styleClass", "medium");
-        putClientProperty("JTextField.showClearButton", true);
+        putClientProperty("FlatLaf.styleClass", "large");
         putClientProperty("JTextField.placeholderText", "Search");
 
         int fontHeight = getFontMetrics(getFont()).getHeight();
@@ -56,9 +56,14 @@ public class SearchTextField extends JTextField {
 
     private JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
+        // For some reason setting the background to a colour makes it transparent, and is the only
+        // way I could find of doing so
+        menuBar.setBackground(new Color(0, 0, 0));
         menuBar.setBorder(new EmptyBorder(0, 0, 0, 0));
 
-        JMenu menu = new JMenu("Columns");
+        JMenu menu = new JMenu();
+        menu.setIcon(FontIcon.of(CarbonIcons.EDIT_FILTER,
+                (int) (0.9 * getFontMetrics(getFont()).getHeight())));
 
         menu.add(createSelectAllItem());
         menu.addSeparator();
@@ -66,25 +71,26 @@ public class SearchTextField extends JTextField {
         QuestionAttribute[] attributes = QuestionAttribute.values();
         QuestionNumericalAttribute[] numericalAttributes = QuestionNumericalAttribute.values();
 
-        JCheckBoxMenuItem item = new JCheckBoxMenuItem(ReformatString.toPlainText(
+        JCheckBox item = new JCheckBox(ReformatString.toPlainText(
                 numericalAttributes[0].toString(), false));
-        checkBoxMenuItems.add(item);
+        checkBoxes.add(item);
 
         for (int i = 0; i < attributes.length; i++) {
-            JCheckBoxMenuItem tempItem = new JCheckBoxMenuItem(ReformatString.toPlainText(
+            JCheckBox tempItem = new JCheckBox(ReformatString.toPlainText(
                     attributes[i].toString(), false));
-            checkBoxMenuItems.add(tempItem);
+            checkBoxes.add(tempItem);
         }
 
         for (int i = 1; i < numericalAttributes.length; i++) {
-            JCheckBoxMenuItem tempItem = new JCheckBoxMenuItem(ReformatString.toPlainText(
+            JCheckBox tempItem = new JCheckBox(ReformatString.toPlainText(
                     numericalAttributes[i].toString(), false));
-            checkBoxMenuItems.add(tempItem);
+            checkBoxes.add(tempItem);
         }
 
-        for (JCheckBoxMenuItem checkBoxItem : checkBoxMenuItems) {
-            menu.add(checkBoxItem);
-            checkBoxItem.addActionListener(new ActionListener() {
+        for (JCheckBox checkBox : checkBoxes) {
+            checkBox.putClientProperty("FlatLaf.styleClass", "medium");
+            menu.add(checkBox);
+            checkBox.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     updateSearchFilter();
@@ -92,10 +98,10 @@ public class SearchTextField extends JTextField {
             });
         }
 
-        checkBoxMenuItems.get(1).setSelected(true);
+        checkBoxes.get(1).setSelected(true);
 
         menu.addSeparator();
-        menu.add(createClearSelectionItem());
+        menu.add(createResetSelectionItem());
 
         menuBar.add(menu);
 
@@ -104,10 +110,13 @@ public class SearchTextField extends JTextField {
 
     private JMenuItem createSelectAllItem() {
         JMenuItem selectAll = new JMenuItem("Select all");
+        selectAll.putClientProperty("FlatLaf.styleClass", "medium");
+        selectAll.setIcon(FontIcon.of(CarbonIcons.LIST_CHECKED,
+                (int) (0.9 * getFontMetrics(selectAll.getFont()).getHeight())));
         selectAll.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                for (JCheckBoxMenuItem item : checkBoxMenuItems) {
+                for (JCheckBox item : checkBoxes) {
                     item.setSelected(true);
                 }
                 updateSearchFilter();
@@ -117,20 +126,23 @@ public class SearchTextField extends JTextField {
         return selectAll;
     }
 
-    private JMenuItem createClearSelectionItem() {
-        JMenuItem clearSelection = new JMenuItem("Clear selection");
-        clearSelection.addActionListener(new ActionListener() {
+    private JMenuItem createResetSelectionItem() {
+        JMenuItem resetSelection = new JMenuItem("Reset selection");
+        resetSelection.putClientProperty("FlatLaf.styleClass", "medium");
+        resetSelection.setIcon(FontIcon.of(CarbonIcons.LIST_BOXES,
+                        (int) (0.9 * getFontMetrics(resetSelection.getFont()).getHeight())));
+        resetSelection.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                for (JCheckBoxMenuItem item : checkBoxMenuItems) {
+                for (JCheckBox item : checkBoxes) {
                     item.setSelected(false);
                 }
-                checkBoxMenuItems.get(1).setSelected(true);
+                checkBoxes.get(1).setSelected(true);
                 updateSearchFilter();
             }
         });
 
-        return clearSelection;
+        return resetSelection;
     }
 
     private void updateSearchFilter() {
@@ -138,18 +150,24 @@ public class SearchTextField extends JTextField {
             @Override
             public boolean include(
                     Entry<? extends TableModel, ? extends Integer> entry) {
-                for (int i = 0; i < checkBoxMenuItems.size(); i++) {
-                    if (!checkBoxMenuItems.get(i).isSelected()) {
+                boolean noneSelected = true;
+                for (int i = 0; i < checkBoxes.size(); i++) {
+                    if (!checkBoxes.get(i).isSelected()) {
                         continue;
                     }
 
+                    noneSelected = false;
                     String value = entry.getStringValue(i + 1).toUpperCase();
                     if (value.contains(getText().toUpperCase())) {
                         return true;
                     }
                 }
 
-                return false;
+                if (noneSelected) {
+                    return true;
+                } else {
+                    return false;
+                }
 
             }
         };

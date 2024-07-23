@@ -3,18 +3,16 @@ package program;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.fonts.jetbrains_mono.FlatJetBrainsMonoFont;
 import com.formdev.flatlaf.intellijthemes.FlatSolarizedLightIJTheme;
-import program.GUI.dialogs.DialogOption;
-import program.GUI.dialogs.MessageDialog;
+import program.GUI.common.dialogs.DialogOption;
+import program.GUI.common.dialogs.MessageDialog;
 import program.GUI.MainFrame;
-import program.GUI.dialogs.OptionDialog;
+import program.GUI.common.dialogs.OptionDialog;
 import program.exceptions.InvalidPropertiesException;
 
 import javax.swing.*;
-import java.awt.*;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Properties;
 
 
 /**

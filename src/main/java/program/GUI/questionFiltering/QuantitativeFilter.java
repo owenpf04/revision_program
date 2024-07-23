@@ -1,13 +1,11 @@
 package program.GUI.questionFiltering;
 
 import com.formdev.flatlaf.icons.FlatOptionPaneErrorIcon;
-import org.kordamp.ikonli.carbonicons.CarbonIcons;
-import org.kordamp.ikonli.swing.FontIcon;
 import program.QuestionList;
 import program.attributes.fields.QuestionNumericalAttribute;
+import program.helpers.Misc;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.TableModel;
@@ -22,9 +20,8 @@ public class QuantitativeFilter extends Filter {
     private int originalMax;
     private int selectedMin;
     private int selectedMax;
-
     public QuantitativeFilter(QuestionNumericalAttribute attribute, int columnNum,
-            QuestionList questionsFromFile, QuestionsTableScrollPane tablePane,
+            QuestionList questionsFromFile, QuestionsSelectionTableScrollPane tablePane,
             int min, int max) {
         this(attribute, columnNum, questionsFromFile, tablePane);
 
@@ -32,7 +29,7 @@ public class QuantitativeFilter extends Filter {
         originalMax = max;
     }
     public QuantitativeFilter(QuestionNumericalAttribute attribute, int columnNum,
-            QuestionList questionsFromFile, QuestionsTableScrollPane tablePane) {
+            QuestionList questionsFromFile, QuestionsSelectionTableScrollPane tablePane) {
         super(columnNum, questionsFromFile, tablePane, attribute.toString(),
                 attribute.getDescription());
 
@@ -63,7 +60,6 @@ public class QuantitativeFilter extends Filter {
 
     private JPanel createNewSliderPanel(int selectedValue, boolean isMin) {
         JPanel mainPanel = new JPanel(new BorderLayout(0, 0));
-        mainPanel.setBorder(new EmptyBorder(0, 0, 15, 0));
 
         String title = isMin ? "Min" : "Max";
         JLabel label = new JLabel(title + ":");
@@ -79,7 +75,7 @@ public class QuantitativeFilter extends Filter {
         slider.setSnapToTicks(true);
         slider.setMinorTickSpacing(1);
         slider.setMajorTickSpacing(originalMax);
-        slider.setPaintLabels(true);
+//        slider.setPaintLabels(true);
 
         slider.addChangeListener(new ChangeListener() {
             @Override
@@ -98,14 +94,18 @@ public class QuantitativeFilter extends Filter {
                 List<RowFilter<TableModel, Integer>> maxFilters = new ArrayList<>();
 
                 minFilters.add(RowFilter.numberFilter(
-                            RowFilter.ComparisonType.EQUAL, selectedMin, columnNum));
+                            RowFilter.ComparisonType.EQUAL, (double) selectedMin,
+                        columnNum));
                 minFilters.add(RowFilter.numberFilter(
-                        RowFilter.ComparisonType.AFTER, selectedMin, columnNum));
+                        RowFilter.ComparisonType.AFTER, (double) selectedMin,
+                        columnNum));
 
                 maxFilters.add(RowFilter.numberFilter(
-                        RowFilter.ComparisonType.EQUAL, selectedMax, columnNum));
+                        RowFilter.ComparisonType.EQUAL, (double) selectedMax,
+                        columnNum));
                 maxFilters.add(RowFilter.numberFilter(
-                        RowFilter.ComparisonType.BEFORE, selectedMax, columnNum));
+                        RowFilter.ComparisonType.BEFORE, (double) selectedMax,
+                        columnNum));
 
                 RowFilter<TableModel, Integer> minFilter = RowFilter.orFilter(minFilters);
                 RowFilter<TableModel, Integer> maxFilter = RowFilter.orFilter(maxFilters);
@@ -134,11 +134,16 @@ public class QuantitativeFilter extends Filter {
     }
 
     private void invalidSelection() {
+        JPanel invalidPanel = new JPanel();
         JLabel invalidSelection = new JLabel("Min cannot be greater than max.",
                 new FlatOptionPaneErrorIcon(), SwingConstants.LEFT);
+        invalidSelection.setIconTextGap(8);
         invalidSelection.putClientProperty("FlatLaf.styleClass", "large");
 
-        optionsPanel.add(invalidSelection, BorderLayout.CENTER);
+        invalidPanel.add(invalidSelection);
+
+        optionsPanel.add(invalidPanel, BorderLayout.CENTER);
+        UIManager.put("Slider.thumbColor", Misc.getUIManagerColor("Actions.Red"));
     }
 
     private void validSelection() {
@@ -152,14 +157,14 @@ public class QuantitativeFilter extends Filter {
                 expanded = false;
 
                 removeAll();
-                headingButton = createHeadingButton(tooltip);
+                headingButton = createHeadingButton();
                 headingButton.addActionListener(new HeadingButtonListener());
                 add(headingButton, BorderLayout.NORTH);
             } else {
                 expanded = true;
 
                 removeAll();
-                headingButton = createHeadingButton(tooltip);
+                headingButton = createHeadingButton();
                 headingButton.addActionListener(new HeadingButtonListener());
                 add(headingButton, BorderLayout.NORTH);
                 add(optionsPanel, BorderLayout.CENTER);

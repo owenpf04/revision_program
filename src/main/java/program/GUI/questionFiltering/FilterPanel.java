@@ -1,5 +1,6 @@
 package program.GUI.questionFiltering;
 
+import program.GUI.common.SearchTextField;
 import program.QuestionList;
 import program.attributes.fields.QuestionAttribute;
 import program.attributes.fields.QuestionNumericalAttribute;
@@ -11,11 +12,11 @@ import java.util.*;
 
 public class FilterPanel extends JPanel {
     private QuestionList questionsFromFile;
-    private QuestionsTableScrollPane tablePane;
+    private QuestionsSelectionTableScrollPane tablePane;
 
     private ArrayList<Filter> filters;
 
-    public FilterPanel(QuestionList questionsFromFile, QuestionsTableScrollPane tablePane) {
+    public FilterPanel(QuestionList questionsFromFile, QuestionsSelectionTableScrollPane tablePane) {
         this.questionsFromFile = questionsFromFile;
         this.tablePane = tablePane;
         this.filters = new ArrayList<>();

@@ -132,23 +132,32 @@
       <option name="project" value="LOCAL" />
       <updated>1720306117960</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Loads more work, mostly focused on improving question filtering - added numerical filters, as well as searching.">
+      <option name="closed" value="true" />
+      <created>1720715965765</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1720715965765</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Lots and lots and lots of work (which I hope has cleaned things up a bit, although a LOT more cleaning up still has to be done), mostly on dialogs and settings." />
-    <option name="LAST_COMMIT_MESSAGE" value="Lots and lots and lots of work (which I hope has cleaned things up a bit, although a LOT more cleaning up still has to be done), mostly on dialogs and settings." />
+    <MESSAGE value="Loads more work, mostly focused on improving question filtering - added numerical filters, as well as searching." />
+    <option name="LAST_COMMIT_MESSAGE" value="Loads more work, mostly focused on improving question filtering - added numerical filters, as well as searching." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/program/GUI/dialogs/MessageDialog.java</url>
+          <url>file://$PROJECT_DIR$/src/main/java/program/GUI/common/dialogs/MessageDialog.java</url>
           <line>66</line>
           <option name="timeStamp" value="5" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/program/GUI/dialogs/OptionDialog.java</url>
+          <url>file://$PROJECT_DIR$/src/main/java/program/GUI/common/dialogs/OptionDialog.java</url>
           <line>40</line>
           <option name="timeStamp" value="6" />
         </line-breakpoint>
@@ -158,8 +167,8 @@
           <option name="timeStamp" value="32" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/program/attributes/fields/QuestionAttribute.java</url>
-          <line>41</line>
+          <url>file://$PROJECT_DIR$/src/main/java/program/GUI/modeSelection/HomeSelectModePanel.java</url>
+          <line>44</line>
           <option name="timeStamp" value="33" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
@@ -173,7 +182,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/main/java/program/GUI/questionFiltering/QuantitativeFilter.java</url>
-          <line>143</line>
+          <line>148</line>
           <properties class="program.GUI.questionFiltering.QuantitativeFilter" method="validSelection">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -184,8 +193,7 @@
     </breakpoint-manager>
     <watches-manager>
       <configuration name="GradleRunConfiguration">
-        <watch expression="selectedMin" language="JAVA" />
-        <watch expression="selectedMax" language="JAVA" />
+        <watch expression="qAttributes[i]" language="JAVA" />
       </configuration>
     </watches-manager>
   </component>

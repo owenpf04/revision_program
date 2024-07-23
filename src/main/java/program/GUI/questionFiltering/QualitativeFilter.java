@@ -19,7 +19,7 @@ public class QualitativeFilter extends Filter {
     Set<String> options;
     Set<String> selectedOptions;
     public QualitativeFilter(QuestionAttribute attribute, int columnNum, QuestionList questionsFromFile,
-            QuestionsTableScrollPane tablePane) {
+            QuestionsSelectionTableScrollPane tablePane) {
         super(columnNum, questionsFromFile, tablePane, attribute.toString(),
                 attribute.getDescription());
 
@@ -60,14 +60,14 @@ public class QualitativeFilter extends Filter {
                 expanded = false;
 
                 removeAll();
-                headingButton = createHeadingButton(tooltip);
+                headingButton = createHeadingButton();
                 headingButton.addActionListener(new HeadingButtonListener());
                 add(headingButton, BorderLayout.NORTH);
             } else {
                 expanded = true;
 
                 removeAll();
-                headingButton = createHeadingButton(tooltip);
+                headingButton = createHeadingButton();
                 headingButton.addActionListener(new HeadingButtonListener());
                 add(headingButton, BorderLayout.NORTH);
                 add(optionsPanel, BorderLayout.CENTER);

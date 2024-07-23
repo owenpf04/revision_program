@@ -187,9 +187,9 @@ public class ReformatString {
                 returnString += "\n";
             }
             returnString += " ".repeat(offset);
-            if (toWrap.charAt(indexesToWrapAt.get(i)) != ' ') {
-                returnString += " ";
-            }
+//            if (toWrap.charAt(indexesToWrapAt.get(i)) != ' ') {
+//                returnString += " ";
+//            }
         }
         String toAdd = toWrap.substring(indexesToWrapAt.get(indexesToWrapAt.size() - 1));
         if (toAdd.startsWith(" ")) {

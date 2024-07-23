@@ -1,4 +1,4 @@
-package program.GUI.dialogs;
+package program.GUI.common.dialogs;
 
 import program.exceptions.InvalidPropertiesException;
 import program.helpers.InvalidProperty;

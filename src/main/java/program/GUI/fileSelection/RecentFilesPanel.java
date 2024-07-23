@@ -4,7 +4,7 @@ import org.kordamp.ikonli.carbonicons.CarbonIcons;
 import org.kordamp.ikonli.swing.FontIcon;
 import program.FileQuestionsInterface;
 import program.GUI.HomeScrollPane;
-import program.GUI.dialogs.MessageDialog;
+import program.GUI.common.dialogs.MessageDialog;
 import program.QuestionFile;
 import program.QuestionList;
 import program.Settings;
@@ -13,7 +13,6 @@ import program.helpers.ReformatDate;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -132,7 +131,8 @@ public class RecentFilesPanel extends JPanel {
 
                         Settings.addRecentFile(questionFile.getFilePath());
 
-                        parentScrollPane.showFilterQuestionsPanel(questionsFromFile);
+                        parentScrollPane.setQuestionsFromFile(questionsFromFile);
+                        parentScrollPane.showFilterQuestionsPanel();
                     } catch (InvalidQuestionFileException exc) {
                         MessageDialog.displayInvalidFileMessage(parentScrollPane, exc);
                     } catch (FileNotFoundException exc) {

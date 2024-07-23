@@ -1,11 +1,9 @@
-package program.GUI.dialogs;
+package program.GUI.common.dialogs;
 
-import com.formdev.flatlaf.fonts.jetbrains_mono.FlatJetBrainsMonoFont;
 import program.exceptions.InvalidQuestionFileException;
 import program.helpers.ReformatString;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.Arrays;
 

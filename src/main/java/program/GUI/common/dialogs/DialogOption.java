@@ -1,4 +1,4 @@
-package program.GUI.dialogs;
+package program.GUI.common.dialogs;
 
 public class DialogOption {
     private final String name;
